@@ -56,39 +56,6 @@ const DiseaseModal = ({
             <p className="text-justify">{disease.description}</p>
           </div>
         </div>
-
-        {/* Overlay */}
-        {!session && (
-          <div className="absolute inset-0 z-10 flex h-full w-full items-center justify-center overflow-hidden rounded-md bg-black/70 px-6 md:px-20">
-            <div className="bg-light flex h-[70%] w-full flex-col items-center justify-center gap-4 rounded-md px-10">
-              <div className="flex flex-col items-center justify-center p-4">
-                <MdLock className="text-primary mx-1 text-4xl" />
-                <p className="text-primary text-center text-lg font-bold">
-                  Login Required
-                </p>
-                <p className="text-dark text-center text-sm">
-                  Log in to continue and make the most of BananaCare's full
-                  functionality
-                </p>
-              </div>
-
-              <div className="flex w-full flex-col gap-2">
-                <Link href="/login" passHref>
-                  <AlertDialogCancel
-                    onClick={onClose}
-                    className="bg-primary text-light w-full rounded-md px-1 py-1 text-center hover:cursor-pointer hover:opacity-70"
-                    asChild
-                  >
-                    <span>Login Here</span>
-                  </AlertDialogCancel>
-                </Link>
-                <AlertDialogCancel className="bg-dark text-light w-full rounded-md px-1 py-1 hover:cursor-pointer hover:opacity-70">
-                  Close
-                </AlertDialogCancel>
-              </div>
-            </div>
-          </div>
-        )}
       </AlertDialogContent>
     </AlertDialog>
   );

@@ -7,7 +7,6 @@ import NextImage from "next/image";
 //Zod
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { scanSchema } from "@/lib/zod";
 //React Hook Form
 import { useForm } from "react-hook-form";
 // React Icons
@@ -16,7 +15,7 @@ import { MdCloudUpload, MdClose } from "react-icons/md";
 import * as tf from "@tensorflow/tfjs";
 import { loadModel, preprocessImage, makePrediction } from "@/lib/tensorflow";
 //Constant
-import { BananaDiseaseType, barangay, augmentationSteps } from "@/lib/constant";
+import { BananaDiseaseType, augmentationSteps } from "@/lib/constant";
 //React Drop Zone
 import { useDropzone } from "react-dropzone";
 //Shadcn
@@ -29,18 +28,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 //Custom Component
 import LoaderModal from "../modals/LoaderModal";
 import ResultModal from "../modals/ResultModal";
 import NotBananaModal from "../modals/NotBananaModal";
+
+// Updated schema for image upload only
+const scanSchema = z.object({
+  file: z.array(z.instanceof(File)).min(1, "Please upload an image"),
+});
 
 export function ScanForm() {
   //* useState
@@ -93,11 +89,7 @@ export function ScanForm() {
   const form = useForm<z.infer<typeof scanSchema>>({
     resolver: zodResolver(scanSchema),
     defaultValues: {
-      name: "",
-      address: "",
-      age: "" as unknown as number,
-      email: "",
-      phoneNumber: "",
+      file: [],
     },
   });
 
@@ -135,12 +127,8 @@ export function ScanForm() {
     const imgData = await res.json();
     const imgUrl = imgData.publicUrl;
 
+    // Simplified payload with only image data
     const payload = {
-      name: values.name,
-      email: values.email,
-      address: values.address,
-      age: Number(values.age),
-      phoneNumber: values.phoneNumber,
       percentage: results[0].percentage,
       resultArr: results,
       result: results[0].id,
@@ -160,16 +148,6 @@ export function ScanForm() {
     } else {
       console.log("Data saved successfully!");
     }
-
-    //   if (!res.ok) {
-    //     console.log("Something went wrong");
-    //   } else {
-    //     // handle success
-    //     console.log("File uploaded successfully!");
-    //   }
-    // } catch (error) {
-    //   console.log("Something went wrong", error);
-    // }
   };
 
   const resetForm = () => {
@@ -281,126 +259,6 @@ export function ScanForm() {
                 </FormItem>
               );
             }}
-          />
-
-          {/* Name Input Field */}
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem className="text-dark flex flex-col gap-1">
-                <FormLabel className="text-primary font-semibold">
-                  Name
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    className="focus-visible:ring-primary focus-within:border-primary border-dark placeholder: text-dark placeholder:text-dark/60 rounded-sm font-medium focus-visible:ring-1"
-                    placeholder="Enter your full name"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage className="text-red-600" />
-              </FormItem>
-            )}
-          />
-
-          {/* Email Input Field */}
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem className="text-dark flex flex-col gap-1">
-                <FormLabel className="text-primary font-semibold">
-                  Email Address
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    className="focus-visible:ring-primary focus-within:border-primary border-dark placeholder: text-dark placeholder:text-dark/60 rounded-sm font-medium focus-visible:ring-1"
-                    placeholder="Enter your email address"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage className="text-red-600" />
-              </FormItem>
-            )}
-          />
-
-          {/* Address Selection */}
-          <FormField
-            control={form.control}
-            name="address"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-primary font-semibold">
-                  Address
-                </FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl className="">
-                    <SelectTrigger className="focus-visible:ring-primary focus-within:border-primary border-dark w-full rounded-sm text-base font-medium focus-visible:ring-1">
-                      <SelectValue placeholder="Select Barangay in Bansud" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent className="bg-light">
-                    {barangay.map((brg, index) => (
-                      <div key={index}>
-                        <SelectItem
-                          key={index}
-                          className="group text-dark hover:bg-primary hover:text-light cursor-pointer px-3 py-3 text-base"
-                          value={brg.title}
-                        >
-                          {brg.title}
-                        </SelectItem>
-                      </div>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <FormMessage className="text-red-600" />
-              </FormItem>
-            )}
-          />
-
-          {/* Age Input Field */}
-          <FormField
-            control={form.control}
-            name="age"
-            render={({ field }) => (
-              <FormItem className="text-dark flex flex-col gap-1">
-                <FormLabel className="text-primary font-semibold">
-                  Age
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    className="focus-visible:ring-primary focus-within:border-primary border-dark placeholder: text-dark placeholder:text-dark/60 rounded-sm font-medium focus-visible:ring-1"
-                    placeholder="Enter your age"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage className="text-red-600" />
-              </FormItem>
-            )}
-          />
-
-          {/* Email Input Field */}
-          <FormField
-            control={form.control}
-            name="phoneNumber"
-            render={({ field }) => (
-              <FormItem className="text-dark flex flex-col gap-1">
-                <FormLabel className="text-primary font-semibold">
-                  Phone Number
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    className="focus-visible:ring-primary focus-within:border-primary border-dark placeholder: text-dark placeholder:text-dark/60 rounded-sm font-medium focus-visible:ring-1"
-                    placeholder="Enter your phone number"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage className="text-red-600" />
-              </FormItem>
-            )}
           />
 
           <Button

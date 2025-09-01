@@ -74,7 +74,7 @@ function LoginForm({ type = "full" }) {
       {/* Login Form */}
       <div className="flex-1 py-4">
         <p className="text-secondary text-center text-xl font-bold">
-          Hello <span className="text-primary">Again!</span>
+          Hello <span className="text-primary">Admin!</span>
         </p>
         <p className="text-center text-sm">
           Sign in to continue your experience and access full features.
@@ -160,7 +160,7 @@ function LoginForm({ type = "full" }) {
           </form>
         </Form>
 
-        <p className="py-4 text-center text-sm">
+        {/* <p className="py-4 text-center text-sm">
           Doesn't have an account? <span> </span>
           {type === "modal" && (
             <Link
@@ -180,11 +180,11 @@ function LoginForm({ type = "full" }) {
               Create one
             </button>
           )}
-        </p>
+        </p> */}
       </div>
 
       {/* Social Media Login */}
-      <div className="flex flex-1 flex-col gap-2">
+      {/* <div className="flex flex-1 flex-col gap-2">
         <div className="flex items-center gap-2 py-2">
           <hr className="flex-1" />
           <p className="text-primary text-center font-medium">or login with</p>
@@ -229,7 +229,7 @@ function LoginForm({ type = "full" }) {
           />
           <p className="font-medium">Continue with GitHub</p>
         </button>
-      </div>
+      </div> */}
 
       <p className="text-center font-medium">Detect Banana Disease with Ease</p>
     </div>

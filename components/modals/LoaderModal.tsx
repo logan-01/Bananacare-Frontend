@@ -41,7 +41,7 @@ const LoaderModal: React.FC<LoaderModalProps> = ({
                 <img
                   src={previewImg}
                   alt="Banana Image"
-                  className="h-full object-center"
+                  className={`h-full object-center ${augmentationSteps[currentStep]?.animation} animate-steps`}
                 />
               )}
             </div>
