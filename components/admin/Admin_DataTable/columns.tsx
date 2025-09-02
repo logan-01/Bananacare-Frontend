@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
-// import ResultModal from "@/components/modals/ResultModal";
 import {
   AlertDialogTrigger,
   AlertDialog,
@@ -13,29 +11,25 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Progress } from "@/components/ui/progress";
 import { MdClose } from "react-icons/md";
-import { BananaDiseaseType } from "@/lib/constant";
+import { JsonValue } from "@prisma/client/runtime/library";
 
 // This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
 export type ResultItem = {
   id: string;
   name: string;
-  color?: string; // optional if some entries don't have it (like "not-banana")
-  textColor?: string; // optional for the same reason
+  color?: string;
+  textColor?: string;
   percentage: number;
   recommendations: string[];
 };
 
 export type ScanResultType = {
-  name: string;
-  email: string;
-  address: string;
-  age: string;
-  phoneNumber: string;
-  percentage: number; // or string, depending on your data
+  address: JsonValue;
+  percentage: number;
   result: string;
   imgUrl: string;
-  resultArr?: ResultItem[];
+  resultArr?: JsonValue;
+  createdAt: string;
 };
 
 const diseaseKeyMap: Record<string, { name: string; color: string }> = {
@@ -51,8 +45,8 @@ const diseaseKeyMap: Record<string, { name: string; color: string }> = {
 function formatDate(dateString: string): string {
   const date: Date = new Date(dateString);
   const options: Intl.DateTimeFormatOptions = {
-    month: "long",
-    day: "numeric",
+    month: "2-digit",
+    day: "2-digit",
     year: "numeric",
   };
   return date.toLocaleDateString("en-US", options);
@@ -82,28 +76,57 @@ export const columns: ColumnDef<ScanResultType>[] = [
     },
   },
   {
-    accessorKey: "name",
-    header: "Name",
+    accessorKey: "state",
+    header: "Region",
+    cell: ({ row }) => {
+      const addr = row.original.address as Record<string, string>;
+      return addr?.region || "N/A";
+    },
+    filterFn: (row, id, value) => {
+      const addr = row.original.address as Record<string, string>;
+      const regionValue = addr?.region || "";
+      return regionValue.toLowerCase().includes(value.toLowerCase());
+    },
   },
   {
-    accessorKey: "email",
-    header: "Email",
+    accessorKey: "barangayTown",
+    header: "Barangay",
+    cell: ({ row }) => {
+      const addr = row.original.address as Record<string, string>;
+      return addr?.village || addr?.suburb || addr?.town || "N/A";
+    },
+    filterFn: (row, id, value) => {
+      const addr = row.original.address as Record<string, string>;
+      const barangayValue = addr?.village || addr?.suburb || addr?.town || "";
+      return barangayValue.toLowerCase().includes(value.toLowerCase());
+    },
   },
   {
-    accessorKey: "address",
-    header: "Address",
+    accessorKey: "municipality",
+    header: "Municipality",
+    cell: ({ row }) => {
+      const addr = row.original.address as Record<string, string>;
+      return addr?.municipality || addr?.city || "N/A";
+    },
+    filterFn: (row, id, value) => {
+      const addr = row.original.address as Record<string, string>;
+      const municipalityValue = addr?.municipality || addr?.city || "";
+      return municipalityValue.toLowerCase().includes(value.toLowerCase());
+    },
   },
-
   {
-    accessorKey: "age",
-    header: "Age",
+    accessorKey: "province",
+    header: "Province",
+    cell: ({ row }) => {
+      const addr = row.original.address as Record<string, string>;
+      return addr?.state || "N/A";
+    },
+    filterFn: (row, id, value) => {
+      const addr = row.original.address as Record<string, string>;
+      const provinceValue = addr?.state || "";
+      return provinceValue.toLowerCase().includes(value.toLowerCase());
+    },
   },
-
-  {
-    accessorKey: "phoneNumber",
-    header: "Phone",
-  },
-
   {
     accessorKey: "confidence",
     header: "Confidence",
@@ -112,20 +135,26 @@ export const columns: ColumnDef<ScanResultType>[] = [
       return value != null ? `${value}%` : "N/A";
     },
   },
-
   {
     accessorKey: "result",
     header: "Result",
     cell: ({ row }) => {
       const resultID = row.getValue("result") as string;
       return (
-        <p className={`${diseaseKeyMap[resultID].color} font-medium`}>
-          {diseaseKeyMap[resultID].name ?? resultID}
+        <p className={`${diseaseKeyMap[resultID]?.color || ""} font-medium`}>
+          {diseaseKeyMap[resultID]?.name || resultID}
         </p>
-      ); // fallback to original if not mapped
+      );
+    },
+    filterFn: (row, id, value) => {
+      const resultValue = row.getValue("result") as string;
+      const displayName = diseaseKeyMap[resultValue]?.name || resultValue;
+      return (
+        displayName.toLowerCase().includes(value.toLowerCase()) ||
+        resultValue.toLowerCase().includes(value.toLowerCase())
+      );
     },
   },
-
   {
     id: "summary",
     header: "Summary",
@@ -165,7 +194,11 @@ export const columns: ColumnDef<ScanResultType>[] = [
                 <div className="bg-dark/70 absolute inset-0 flex h-full w-full items-center justify-center">
                   <div className="bg-primary rounded-md p-2 hover:opacity-70">
                     <p className="text-light font-bold">
-                      {rankedResults?.[0]?.name}
+                      {
+                        (Array.isArray(rankedResults)
+                          ? (rankedResults as ResultItem[])
+                          : [])[0]?.name
+                      }
                     </p>
                   </div>
                 </div>
@@ -178,8 +211,11 @@ export const columns: ColumnDef<ScanResultType>[] = [
                   <p className="text-dark rounded-md text-sm font-bold">
                     Result
                   </p>
-                  {rankedResults
-                    ?.filter((item) => item.name.toLowerCase() !== "not banana")
+                  {(Array.isArray(rankedResults)
+                    ? (rankedResults as ResultItem[])
+                    : []
+                  )
+                    .filter((item) => item.name.toLowerCase() !== "not banana")
                     .map((result, index) => (
                       <div
                         className="text-light flex items-center justify-center gap-2 rounded-md px-2 py-2"
@@ -206,18 +242,21 @@ export const columns: ColumnDef<ScanResultType>[] = [
                     Recommendation
                   </p>
                   <div className="flex flex-col gap-1">
-                    {rankedResults?.[0]?.recommendations?.map(
-                      (recommend, index) => (
-                        <div
-                          className="bg-primary flex items-center gap-1 rounded-md px-2 py-2"
-                          key={index}
-                        >
-                          <p className="text-light rounded-md text-sm">
-                            {recommend}
-                          </p>
-                        </div>
-                      ),
-                    )}
+                    {Array.isArray(rankedResults) &&
+                    (rankedResults as ResultItem[])[0]?.recommendations
+                      ? (rankedResults as ResultItem[])[0].recommendations.map(
+                          (recommend, index) => (
+                            <div
+                              className="bg-primary flex items-center gap-1 rounded-md px-2 py-2"
+                              key={index}
+                            >
+                              <p className="text-light rounded-md text-sm">
+                                {recommend}
+                              </p>
+                            </div>
+                          ),
+                        )
+                      : null}
                   </div>
                 </div>
               </div>

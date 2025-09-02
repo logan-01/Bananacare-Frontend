@@ -2,7 +2,11 @@
 
 import React, { useEffect } from "react";
 import Navbar from "@/components/user/Navbar";
+import BottomNav from "@/components/user/BottomNav";
 import Footer from "@/components/user/Footer";
+import ScanActionButton from "@/components/user/ScanActionButton";
+
+import { Capacitor } from "@capacitor/core";
 
 function UserLayout({
   auth,
@@ -27,6 +31,10 @@ function UserLayout({
   return (
     <div className="flex h-full flex-1 flex-col">
       <Navbar />
+
+      {Capacitor.isNativePlatform() && <BottomNav />}
+
+      <ScanActionButton />
 
       {auth}
       {home}

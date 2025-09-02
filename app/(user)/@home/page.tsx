@@ -1,26 +1,11 @@
 import React from "react";
 import Image from "next/image";
-
-//Client Components
-import { ScanForm } from "@/components/client/ScanForm";
-import MoreInfoButton from "@/components/user/MoreInfoButton";
 import { auth } from "@/lib/auth";
-
 import Link from "next/link";
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-
-import { MdClose, MdLock } from "react-icons/md";
+// Client Components
+import ScanModal from "@/components/modals/ScanModal"; // Import the new component
+import MoreInfoButton from "@/components/user/MoreInfoButton";
 
 async function page() {
   const session = await auth();
@@ -62,28 +47,10 @@ async function page() {
         </p>
 
         <div className="flex justify-center gap-5 lg:w-[70%]">
-          <AlertDialog>
-            <AlertDialogTrigger className="bg-primary text-light flex-1 rounded-md px-8 py-2 font-medium hover:cursor-pointer hover:opacity-70">
-              Scan Now
-            </AlertDialogTrigger>
-
-            <AlertDialogContent
-              className={`bg-light border-none md:min-w-[48vw] md:px-10 ${session?.user ? "overflow-y-auto" : "overflow-hidden"}`}
-            >
-              <AlertDialogHeader className="text-left">
-                <AlertDialogTitle className="flex items-center">
-                  <p className="text-dark font-clash-grotesk flex-1 text-xl font-semibold">
-                    Scan Banana Disease
-                  </p>
-                  <AlertDialogCancel className="border-none text-right shadow-none hover:cursor-pointer hover:opacity-70">
-                    <MdClose className="size-6" />
-                  </AlertDialogCancel>
-                </AlertDialogTitle>
-              </AlertDialogHeader>
-
-              <ScanForm />
-            </AlertDialogContent>
-          </AlertDialog>
+          <ScanModal
+            trigger={<span>Scan Now</span>}
+            className="bg-primary text-light flex-1 rounded-md px-8 py-2 font-medium hover:cursor-pointer hover:opacity-70"
+          />
 
           <MoreInfoButton />
         </div>

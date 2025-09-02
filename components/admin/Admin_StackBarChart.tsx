@@ -174,7 +174,22 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export default function Admin_StackBarChart({ chartData }) {
+type ChartDataItem = {
+  key: string;
+  "black-sigatoka": number;
+  cordana: number;
+  "bract-mosaic-virus": number;
+  moko: number;
+  panama: number;
+  weevil: number;
+  healthy?: number;
+};
+
+export default function Admin_StackBarChart({
+  chartData,
+}: {
+  chartData: ChartDataItem[];
+}) {
   return (
     <Card className="bg-light flex-1 rounded-md border-none shadow-none">
       <CardHeader>

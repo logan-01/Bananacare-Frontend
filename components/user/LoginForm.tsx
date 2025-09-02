@@ -55,7 +55,7 @@ function LoginForm({ type = "full" }) {
       email: values.email,
       password: values.password,
       redirect: false,
-      redirectTo: "/",
+      redirectTo: "/admin",
     });
 
     setLoading(false);
@@ -65,7 +65,7 @@ function LoginForm({ type = "full" }) {
     } else {
       console.log("Login successful:", result);
       // Redirect or perform any other action after successful login
-      router.push("/");
+      router.push("/admin");
     }
   }
 

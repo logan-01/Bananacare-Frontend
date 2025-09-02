@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 
 async function LoginPage() {
   const session = await auth();
-  if (session) redirect("/");
+  if (session) redirect("/admin");
 
   return (
     <div className="bg-primary/80 flex h-screen items-center justify-center">

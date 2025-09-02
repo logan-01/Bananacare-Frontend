@@ -7,12 +7,8 @@ import prisma from "@/lib/prisma";
 async function page() {
   const scanResults = await prisma.scanResult.findMany({
     select: {
-      createdAt: true,
-      name: true,
-      email: true,
       address: true,
-      age: true,
-      phoneNumber: true,
+      createdAt: true,
       result: true,
       percentage: true,
       imgUrl: true,

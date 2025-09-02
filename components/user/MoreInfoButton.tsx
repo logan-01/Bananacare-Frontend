@@ -12,7 +12,7 @@ function MoreInfoButton() {
 
   return (
     <button
-      className="bg-secondary text-dark flex-1 rounded-md px-8 py-2 font-medium hover:cursor-pointer hover:opacity-70"
+      className="bg-secondary text-dark w-1/2 rounded-md px-8 py-2 font-medium hover:cursor-pointer hover:opacity-70"
       onClick={() => handleNavClick("disease")}
     >
       More Info

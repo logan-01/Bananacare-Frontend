@@ -86,15 +86,11 @@ model Authenticator {
 }
 
 model ScanResult {
-  id          String   @id @default(uuid())
-  name        String
-  email       String
-  address     String
-  age         Int
-  phoneNumber String
-  result      String
-  resultArr   Json
-  percentage  Float
-  imgUrl      String
-  createdAt   DateTime @default(now())
+  id         String   @id @default(uuid())
+  address    Json
+  result     String
+  resultArr  Json
+  percentage Float
+  imgUrl     String
+  createdAt  DateTime @default(now())
 }

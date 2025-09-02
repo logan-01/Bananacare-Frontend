@@ -8,28 +8,8 @@ export async function POST(req: NextRequest) {
     console.log("Request", data);
 
     // Validate required fields
-    const {
-      name,
-      email,
-      address,
-      age,
-      phoneNumber,
-      percentage,
-      result,
-      resultArr,
-      imgUrl,
-    } = data;
-    if (
-      !name ||
-      !email ||
-      !address ||
-      !age ||
-      !phoneNumber ||
-      !percentage ||
-      !result ||
-      !resultArr ||
-      !imgUrl
-    ) {
+    const { address, percentage, result, resultArr, imgUrl } = data;
+    if (!address || !percentage || !result || !resultArr || !imgUrl) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 },
@@ -38,11 +18,7 @@ export async function POST(req: NextRequest) {
 
     const saved = await prisma.scanResult.create({
       data: {
-        name,
-        email,
         address,
-        age: Number(age),
-        phoneNumber,
         percentage,
         result,
         resultArr,
@@ -54,7 +30,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("API Error:", error); // Log full error object
     return NextResponse.json(
-      { error: error.message || "Unknown error" },
+      { error: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 },
     );
   }

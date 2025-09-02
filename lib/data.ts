@@ -17,11 +17,7 @@ async function getScanResults() {
   return prisma.scanResult.findMany({
     select: {
       createdAt: true,
-      name: true,
-      email: true,
       address: true,
-      age: true,
-      phoneNumber: true,
       percentage: true,
       result: true,
       resultArr: true,

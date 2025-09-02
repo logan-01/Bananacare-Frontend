@@ -1,24 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import Link from "next/link";
-import { useSession, signOut } from "next-auth/react";
-
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuIndicator,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  NavigationMenuViewport,
-} from "@/components/ui/navigation-menu";
 
 function DesktopNav() {
-  const { data: session, status } = useSession();
-
   const sectionIds = ["home", "disease", "about", "contact"];
   const [activeNav, setActiveNav] = useState<string>("home");
   const activeNavRef = useRef(activeNav);
@@ -53,10 +37,6 @@ function DesktopNav() {
     }
     setActiveNav(id);
     activeNavRef.current = id;
-  };
-
-  const onLogout = async () => {
-    await signOut();
   };
 
   return (

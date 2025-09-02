@@ -60,7 +60,7 @@ export type ScanResult = $Result.DefaultSelection<Prisma.$ScanResultPayload>
  */
 export class PrismaClient<
   ClientOptions extends Prisma.PrismaClientOptions = Prisma.PrismaClientOptions,
-  U = 'log' extends keyof ClientOptions ? ClientOptions['log'] extends Array<Prisma.LogLevel | Prisma.LogDefinition> ? Prisma.GetEvents<ClientOptions['log']> : never : never,
+  const U = 'log' extends keyof ClientOptions ? ClientOptions['log'] extends Array<Prisma.LogLevel | Prisma.LogDefinition> ? Prisma.GetEvents<ClientOptions['log']> : never : never,
   ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs
 > {
   [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['other'] }
@@ -92,13 +92,6 @@ export class PrismaClient<
    * Disconnect from the database
    */
   $disconnect(): $Utils.JsPromise<void>;
-
-  /**
-   * Add a middleware
-   * @deprecated since 4.16.0. For new code, prefer client extensions instead.
-   * @see https://pris.ly/d/extensions
-   */
-  $use(cb: Prisma.Middleware): void
 
 /**
    * Executes a prepared raw query and returns the number of affected rows.
@@ -286,8 +279,8 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 6.8.2
-   * Query Engine version: 2060c79ba17c6bb9f5823312b6f6b7f4a845738e
+   * Prisma Client JS version: 6.15.0
+   * Query Engine version: 85179d7826409ee107a6ba334b5e305ae3fba9fb
    */
   export type PrismaVersion = {
     client: string
@@ -1183,16 +1176,24 @@ export namespace Prisma {
     /**
      * @example
      * ```
-     * // Defaults to stdout
+     * // Shorthand for `emit: 'stdout'`
      * log: ['query', 'info', 'warn', 'error']
      * 
-     * // Emit as events
+     * // Emit as events only
      * log: [
-     *   { emit: 'stdout', level: 'query' },
-     *   { emit: 'stdout', level: 'info' },
-     *   { emit: 'stdout', level: 'warn' }
-     *   { emit: 'stdout', level: 'error' }
+     *   { emit: 'event', level: 'query' },
+     *   { emit: 'event', level: 'info' },
+     *   { emit: 'event', level: 'warn' }
+     *   { emit: 'event', level: 'error' }
      * ]
+     * 
+     * / Emit as events and log to stdout
+     * og: [
+     *  { emit: 'stdout', level: 'query' },
+     *  { emit: 'stdout', level: 'info' },
+     *  { emit: 'stdout', level: 'warn' }
+     *  { emit: 'stdout', level: 'error' }
+     * 
      * ```
      * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/logging#the-log-option).
      */
@@ -1239,10 +1240,15 @@ export namespace Prisma {
     emit: 'stdout' | 'event'
   }
 
-  export type GetLogType<T extends LogLevel | LogDefinition> = T extends LogDefinition ? T['emit'] extends 'event' ? T['level'] : never : never
-  export type GetEvents<T extends any> = T extends Array<LogLevel | LogDefinition> ?
-    GetLogType<T[0]> | GetLogType<T[1]> | GetLogType<T[2]> | GetLogType<T[3]>
-    : never
+  export type CheckIsLogLevel<T> = T extends LogLevel ? T : never;
+
+  export type GetLogType<T> = CheckIsLogLevel<
+    T extends LogDefinition ? T['level'] : T
+  >;
+
+  export type GetEvents<T extends any[]> = T extends Array<LogLevel | LogDefinition>
+    ? GetLogType<T[number]>
+    : never;
 
   export type QueryEvent = {
     timestamp: Date
@@ -1282,25 +1288,6 @@ export namespace Prisma {
     | 'runCommandRaw'
     | 'findRaw'
     | 'groupBy'
-
-  /**
-   * These options are being passed into the middleware as "params"
-   */
-  export type MiddlewareParams = {
-    model?: ModelName
-    action: PrismaAction
-    args: any
-    dataPath: string[]
-    runInTransaction: boolean
-  }
-
-  /**
-   * The `T` type makes sure, that the `return proceed` is not forgotten in the middleware implementation
-   */
-  export type Middleware<T = any> = (
-    params: MiddlewareParams,
-    next: (params: MiddlewareParams) => $Utils.JsPromise<T>,
-  ) => $Utils.JsPromise<T>
 
   // tested in getLogLevel.test.ts
   export function getLogLevel(log: Array<LogLevel | LogDefinition>): LogLevel | undefined;
@@ -6904,22 +6891,15 @@ export namespace Prisma {
   }
 
   export type ScanResultAvgAggregateOutputType = {
-    age: number | null
     percentage: number | null
   }
 
   export type ScanResultSumAggregateOutputType = {
-    age: number | null
     percentage: number | null
   }
 
   export type ScanResultMinAggregateOutputType = {
     id: string | null
-    name: string | null
-    email: string | null
-    address: string | null
-    age: number | null
-    phoneNumber: string | null
     result: string | null
     percentage: number | null
     imgUrl: string | null
@@ -6928,11 +6908,6 @@ export namespace Prisma {
 
   export type ScanResultMaxAggregateOutputType = {
     id: string | null
-    name: string | null
-    email: string | null
-    address: string | null
-    age: number | null
-    phoneNumber: string | null
     result: string | null
     percentage: number | null
     imgUrl: string | null
@@ -6941,11 +6916,7 @@ export namespace Prisma {
 
   export type ScanResultCountAggregateOutputType = {
     id: number
-    name: number
-    email: number
     address: number
-    age: number
-    phoneNumber: number
     result: number
     resultArr: number
     percentage: number
@@ -6956,22 +6927,15 @@ export namespace Prisma {
 
 
   export type ScanResultAvgAggregateInputType = {
-    age?: true
     percentage?: true
   }
 
   export type ScanResultSumAggregateInputType = {
-    age?: true
     percentage?: true
   }
 
   export type ScanResultMinAggregateInputType = {
     id?: true
-    name?: true
-    email?: true
-    address?: true
-    age?: true
-    phoneNumber?: true
     result?: true
     percentage?: true
     imgUrl?: true
@@ -6980,11 +6944,6 @@ export namespace Prisma {
 
   export type ScanResultMaxAggregateInputType = {
     id?: true
-    name?: true
-    email?: true
-    address?: true
-    age?: true
-    phoneNumber?: true
     result?: true
     percentage?: true
     imgUrl?: true
@@ -6993,11 +6952,7 @@ export namespace Prisma {
 
   export type ScanResultCountAggregateInputType = {
     id?: true
-    name?: true
-    email?: true
     address?: true
-    age?: true
-    phoneNumber?: true
     result?: true
     resultArr?: true
     percentage?: true
@@ -7094,11 +7049,7 @@ export namespace Prisma {
 
   export type ScanResultGroupByOutputType = {
     id: string
-    name: string
-    email: string
-    address: string
-    age: number
-    phoneNumber: string
+    address: JsonValue
     result: string
     resultArr: JsonValue
     percentage: number
@@ -7127,11 +7078,7 @@ export namespace Prisma {
 
   export type ScanResultSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    name?: boolean
-    email?: boolean
     address?: boolean
-    age?: boolean
-    phoneNumber?: boolean
     result?: boolean
     resultArr?: boolean
     percentage?: boolean
@@ -7141,11 +7088,7 @@ export namespace Prisma {
 
   export type ScanResultSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    name?: boolean
-    email?: boolean
     address?: boolean
-    age?: boolean
-    phoneNumber?: boolean
     result?: boolean
     resultArr?: boolean
     percentage?: boolean
@@ -7155,11 +7098,7 @@ export namespace Prisma {
 
   export type ScanResultSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    name?: boolean
-    email?: boolean
     address?: boolean
-    age?: boolean
-    phoneNumber?: boolean
     result?: boolean
     resultArr?: boolean
     percentage?: boolean
@@ -7169,11 +7108,7 @@ export namespace Prisma {
 
   export type ScanResultSelectScalar = {
     id?: boolean
-    name?: boolean
-    email?: boolean
     address?: boolean
-    age?: boolean
-    phoneNumber?: boolean
     result?: boolean
     resultArr?: boolean
     percentage?: boolean
@@ -7181,18 +7116,14 @@ export namespace Prisma {
     createdAt?: boolean
   }
 
-  export type ScanResultOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "address" | "age" | "phoneNumber" | "result" | "resultArr" | "percentage" | "imgUrl" | "createdAt", ExtArgs["result"]["scanResult"]>
+  export type ScanResultOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "address" | "result" | "resultArr" | "percentage" | "imgUrl" | "createdAt", ExtArgs["result"]["scanResult"]>
 
   export type $ScanResultPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "ScanResult"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      name: string
-      email: string
-      address: string
-      age: number
-      phoneNumber: string
+      address: Prisma.JsonValue
       result: string
       resultArr: Prisma.JsonValue
       percentage: number
@@ -7622,11 +7553,7 @@ export namespace Prisma {
    */
   interface ScanResultFieldRefs {
     readonly id: FieldRef<"ScanResult", 'String'>
-    readonly name: FieldRef<"ScanResult", 'String'>
-    readonly email: FieldRef<"ScanResult", 'String'>
-    readonly address: FieldRef<"ScanResult", 'String'>
-    readonly age: FieldRef<"ScanResult", 'Int'>
-    readonly phoneNumber: FieldRef<"ScanResult", 'String'>
+    readonly address: FieldRef<"ScanResult", 'Json'>
     readonly result: FieldRef<"ScanResult", 'String'>
     readonly resultArr: FieldRef<"ScanResult", 'Json'>
     readonly percentage: FieldRef<"ScanResult", 'Float'>
@@ -8081,11 +8008,7 @@ export namespace Prisma {
 
   export const ScanResultScalarFieldEnum: {
     id: 'id',
-    name: 'name',
-    email: 'email',
     address: 'address',
-    age: 'age',
-    phoneNumber: 'phoneNumber',
     result: 'result',
     resultArr: 'resultArr',
     percentage: 'percentage',
@@ -8571,11 +8494,7 @@ export namespace Prisma {
     OR?: ScanResultWhereInput[]
     NOT?: ScanResultWhereInput | ScanResultWhereInput[]
     id?: StringFilter<"ScanResult"> | string
-    name?: StringFilter<"ScanResult"> | string
-    email?: StringFilter<"ScanResult"> | string
-    address?: StringFilter<"ScanResult"> | string
-    age?: IntFilter<"ScanResult"> | number
-    phoneNumber?: StringFilter<"ScanResult"> | string
+    address?: JsonFilter<"ScanResult">
     result?: StringFilter<"ScanResult"> | string
     resultArr?: JsonFilter<"ScanResult">
     percentage?: FloatFilter<"ScanResult"> | number
@@ -8585,11 +8504,7 @@ export namespace Prisma {
 
   export type ScanResultOrderByWithRelationInput = {
     id?: SortOrder
-    name?: SortOrder
-    email?: SortOrder
     address?: SortOrder
-    age?: SortOrder
-    phoneNumber?: SortOrder
     result?: SortOrder
     resultArr?: SortOrder
     percentage?: SortOrder
@@ -8602,11 +8517,7 @@ export namespace Prisma {
     AND?: ScanResultWhereInput | ScanResultWhereInput[]
     OR?: ScanResultWhereInput[]
     NOT?: ScanResultWhereInput | ScanResultWhereInput[]
-    name?: StringFilter<"ScanResult"> | string
-    email?: StringFilter<"ScanResult"> | string
-    address?: StringFilter<"ScanResult"> | string
-    age?: IntFilter<"ScanResult"> | number
-    phoneNumber?: StringFilter<"ScanResult"> | string
+    address?: JsonFilter<"ScanResult">
     result?: StringFilter<"ScanResult"> | string
     resultArr?: JsonFilter<"ScanResult">
     percentage?: FloatFilter<"ScanResult"> | number
@@ -8616,11 +8527,7 @@ export namespace Prisma {
 
   export type ScanResultOrderByWithAggregationInput = {
     id?: SortOrder
-    name?: SortOrder
-    email?: SortOrder
     address?: SortOrder
-    age?: SortOrder
-    phoneNumber?: SortOrder
     result?: SortOrder
     resultArr?: SortOrder
     percentage?: SortOrder
@@ -8638,11 +8545,7 @@ export namespace Prisma {
     OR?: ScanResultScalarWhereWithAggregatesInput[]
     NOT?: ScanResultScalarWhereWithAggregatesInput | ScanResultScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"ScanResult"> | string
-    name?: StringWithAggregatesFilter<"ScanResult"> | string
-    email?: StringWithAggregatesFilter<"ScanResult"> | string
-    address?: StringWithAggregatesFilter<"ScanResult"> | string
-    age?: IntWithAggregatesFilter<"ScanResult"> | number
-    phoneNumber?: StringWithAggregatesFilter<"ScanResult"> | string
+    address?: JsonWithAggregatesFilter<"ScanResult">
     result?: StringWithAggregatesFilter<"ScanResult"> | string
     resultArr?: JsonWithAggregatesFilter<"ScanResult">
     percentage?: FloatWithAggregatesFilter<"ScanResult"> | number
@@ -9025,11 +8928,7 @@ export namespace Prisma {
 
   export type ScanResultCreateInput = {
     id?: string
-    name: string
-    email: string
-    address: string
-    age: number
-    phoneNumber: string
+    address: JsonNullValueInput | InputJsonValue
     result: string
     resultArr: JsonNullValueInput | InputJsonValue
     percentage: number
@@ -9039,11 +8938,7 @@ export namespace Prisma {
 
   export type ScanResultUncheckedCreateInput = {
     id?: string
-    name: string
-    email: string
-    address: string
-    age: number
-    phoneNumber: string
+    address: JsonNullValueInput | InputJsonValue
     result: string
     resultArr: JsonNullValueInput | InputJsonValue
     percentage: number
@@ -9053,11 +8948,7 @@ export namespace Prisma {
 
   export type ScanResultUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    address?: StringFieldUpdateOperationsInput | string
-    age?: IntFieldUpdateOperationsInput | number
-    phoneNumber?: StringFieldUpdateOperationsInput | string
+    address?: JsonNullValueInput | InputJsonValue
     result?: StringFieldUpdateOperationsInput | string
     resultArr?: JsonNullValueInput | InputJsonValue
     percentage?: FloatFieldUpdateOperationsInput | number
@@ -9067,11 +8958,7 @@ export namespace Prisma {
 
   export type ScanResultUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    address?: StringFieldUpdateOperationsInput | string
-    age?: IntFieldUpdateOperationsInput | number
-    phoneNumber?: StringFieldUpdateOperationsInput | string
+    address?: JsonNullValueInput | InputJsonValue
     result?: StringFieldUpdateOperationsInput | string
     resultArr?: JsonNullValueInput | InputJsonValue
     percentage?: FloatFieldUpdateOperationsInput | number
@@ -9081,11 +8968,7 @@ export namespace Prisma {
 
   export type ScanResultCreateManyInput = {
     id?: string
-    name: string
-    email: string
-    address: string
-    age: number
-    phoneNumber: string
+    address: JsonNullValueInput | InputJsonValue
     result: string
     resultArr: JsonNullValueInput | InputJsonValue
     percentage: number
@@ -9095,11 +8978,7 @@ export namespace Prisma {
 
   export type ScanResultUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    address?: StringFieldUpdateOperationsInput | string
-    age?: IntFieldUpdateOperationsInput | number
-    phoneNumber?: StringFieldUpdateOperationsInput | string
+    address?: JsonNullValueInput | InputJsonValue
     result?: StringFieldUpdateOperationsInput | string
     resultArr?: JsonNullValueInput | InputJsonValue
     percentage?: FloatFieldUpdateOperationsInput | number
@@ -9109,11 +8988,7 @@ export namespace Prisma {
 
   export type ScanResultUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    address?: StringFieldUpdateOperationsInput | string
-    age?: IntFieldUpdateOperationsInput | number
-    phoneNumber?: StringFieldUpdateOperationsInput | string
+    address?: JsonNullValueInput | InputJsonValue
     result?: StringFieldUpdateOperationsInput | string
     resultArr?: JsonNullValueInput | InputJsonValue
     percentage?: FloatFieldUpdateOperationsInput | number
@@ -9567,11 +9442,7 @@ export namespace Prisma {
 
   export type ScanResultCountOrderByAggregateInput = {
     id?: SortOrder
-    name?: SortOrder
-    email?: SortOrder
     address?: SortOrder
-    age?: SortOrder
-    phoneNumber?: SortOrder
     result?: SortOrder
     resultArr?: SortOrder
     percentage?: SortOrder
@@ -9580,17 +9451,11 @@ export namespace Prisma {
   }
 
   export type ScanResultAvgOrderByAggregateInput = {
-    age?: SortOrder
     percentage?: SortOrder
   }
 
   export type ScanResultMaxOrderByAggregateInput = {
     id?: SortOrder
-    name?: SortOrder
-    email?: SortOrder
-    address?: SortOrder
-    age?: SortOrder
-    phoneNumber?: SortOrder
     result?: SortOrder
     percentage?: SortOrder
     imgUrl?: SortOrder
@@ -9599,11 +9464,6 @@ export namespace Prisma {
 
   export type ScanResultMinOrderByAggregateInput = {
     id?: SortOrder
-    name?: SortOrder
-    email?: SortOrder
-    address?: SortOrder
-    age?: SortOrder
-    phoneNumber?: SortOrder
     result?: SortOrder
     percentage?: SortOrder
     imgUrl?: SortOrder
@@ -9611,7 +9471,6 @@ export namespace Prisma {
   }
 
   export type ScanResultSumOrderByAggregateInput = {
-    age?: SortOrder
     percentage?: SortOrder
   }
   export type JsonWithAggregatesFilter<$PrismaModel = never> =

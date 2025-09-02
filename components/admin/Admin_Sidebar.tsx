@@ -48,11 +48,11 @@ const items = [
   //   icon: RiBarChart2Line,
   // },
 
-  {
-    title: "Users",
-    url: "/admin/users",
-    icon: RiUserLine,
-  },
+  // {
+  //   title: "Users",
+  //   url: "/admin/users",
+  //   icon: RiUserLine,
+  // },
 ];
 
 export function Admin_Sidebar() {

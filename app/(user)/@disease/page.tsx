@@ -67,7 +67,7 @@ function Page() {
 
   return (
     <section
-      className="mt-10 flex scroll-mt-20 flex-col items-center justify-center gap-3 px-6 md:px-10 lg:px-28"
+      className="mt-10 flex w-screen scroll-mt-20 flex-col items-center justify-center gap-3 px-6 md:px-10 lg:px-28"
       id="disease"
     >
       <div className="text-center">
@@ -77,11 +77,11 @@ function Page() {
         <p>Identify diseases and keep your banana plants thriving</p>
       </div>
 
-      <div className="bg-primary/20 flex flex-col flex-wrap items-center justify-center gap-2 px-6 py-6 md:flex-row md:rounded-md">
+      <div className="bg-primary/20 flex max-w-screen flex-col flex-wrap items-center justify-center gap-2 overflow-hidden px-6 py-6 md:flex-row md:rounded-md">
         {diseases.map((disease, index) => (
           <div
             key={index}
-            className="bg-primary flex w-96 flex-col items-center justify-center rounded-md px-4 py-4 shadow-black/65"
+            className="bg-primary flex w-fit flex-col items-center justify-center rounded-md px-4 py-4 shadow-black/65 md:w-96"
           >
             <div className="relative h-96 w-full overflow-hidden rounded-t-md">
               <Image
