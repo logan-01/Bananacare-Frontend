@@ -6,8 +6,21 @@ import {
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 import { Progress } from "@/components/ui/progress";
-import { MdClose } from "react-icons/md";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import {
+  MdClose,
+  MdRefresh,
+  MdDownload,
+  MdShare,
+  MdCheckCircle,
+  MdWarning,
+  MdError,
+  MdInfo,
+} from "react-icons/md";
 import { BananaDiseaseType } from "@/lib/constant";
+import PlatformWrapper from "../wrapper/PlatformWrapper";
 
 interface ResultModalProps {
   open: boolean;
@@ -24,89 +37,243 @@ const ResultModal: React.FC<ResultModalProps> = ({
   resetForm,
   previewImg,
 }) => {
+  const handleClose = () => {
+    onClose();
+    if (resetForm) {
+      resetForm();
+    }
+  };
+
+  const handleNewAnalysis = () => {
+    handleClose();
+  };
+
+  const topResult = rankedResults[0];
+  const confidence = topResult?.percentage || 0;
+
+  // Get appropriate icon and styling based on confidence level
+  const getConfidenceStatus = (confidence: number) => {
+    if (confidence >= 90)
+      return {
+        icon: MdCheckCircle,
+        color: "text-green-600",
+        bg: "bg-green-50",
+        label: "High Confidence",
+      };
+    if (confidence >= 70)
+      return {
+        icon: MdWarning,
+        color: "text-yellow-600",
+        bg: "bg-yellow-50",
+        label: "Medium Confidence",
+      };
+    if (confidence >= 50)
+      return {
+        icon: MdError,
+        color: "text-orange-600",
+        bg: "bg-orange-50",
+        label: "Low Confidence",
+      };
+    return {
+      icon: MdInfo,
+      color: "text-gray-600",
+      bg: "bg-gray-50",
+      label: "Very Low Confidence",
+    };
+  };
+
+  const confidenceStatus = getConfidenceStatus(confidence);
+  const ConfidenceIcon = confidenceStatus.icon;
+
+  const filteredResults = rankedResults.filter(
+    (item) => item.name.toLowerCase() !== "not banana",
+  );
+
   return (
-    <AlertDialog open={open} onOpenChange={onClose}>
-      <AlertDialogContent className="bg-light flex h-[95vh] flex-col overflow-y-auto border-none md:min-w-[48vw] md:px-10">
-        <AlertDialogHeader className="h-fit text-left">
-          <AlertDialogTitle className="flex items-center">
-            <p className="text-dark font-clash-grotesk flex-1 text-xl font-semibold">
-              Result and Recommendation
-            </p>
-            <AlertDialogCancel
-              className="border-none text-right shadow-none hover:cursor-pointer hover:opacity-70"
-              onClick={resetForm}
-            >
-              <MdClose className="size-6" />
-            </AlertDialogCancel>
-          </AlertDialogTitle>
-        </AlertDialogHeader>
-
-        {/* Body */}
-        <div className="border-primary bg-primary/20 flex-1 rounded-md p-4">
-          {/* Banana Image */}
-          <div className="bg-primary/20 relative flex aspect-square max-h-[400px] w-full flex-col overflow-hidden rounded-t-md px-4 py-4">
-            {previewImg && (
-              <img
-                src={previewImg}
-                alt="Banana Image"
-                className="h-full object-center"
-              />
-            )}
-
-            <div className="bg-dark/70 absolute inset-0 flex h-full w-full items-center justify-center">
-              <div className="bg-primary rounded-md p-2 hover:opacity-70">
-                <p className="text-light font-bold">{rankedResults[0]?.name}</p>
-              </div>
+    <PlatformWrapper open={open} onOpenChange={handleClose} title="Scan Result">
+      <div className="space-y-6">
+        {/* Header with confidence indicator */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className={`rounded-full p-2 ${confidenceStatus.bg}`}>
+              <ConfidenceIcon className={`h-5 w-5 ${confidenceStatus.color}`} />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">
+                {topResult?.name}
+              </h3>
+              <p className={`text-sm ${confidenceStatus.color} font-medium`}>
+                {confidenceStatus.label} ({confidence}%)
+              </p>
             </div>
           </div>
+          <Badge
+            variant={confidence >= 70 ? "default" : "secondary"}
+            className="text-light px-3 py-1"
+          >
+            Match: {confidence}%
+          </Badge>
+        </div>
 
-          {/* Result and Recommendation */}
-          <div className="border-primary bg-light flex flex-col gap-2 rounded-b-md px-2 py-4">
-            {/* Result */}
-            <div className="flex flex-col gap-1 rounded-md">
-              <p className="text-dark rounded-md text-sm font-bold">Result</p>
-              {rankedResults
-                .filter((item) => item.name.toLowerCase() !== "not banana")
-                .map((result, index) => (
-                  <div
-                    className="text-light flex items-center justify-center gap-2 rounded-md px-2 py-2"
-                    style={{
-                      backgroundColor: result?.color,
-                      color: result?.textColor,
-                    }}
-                    key={index}
-                  >
-                    <p className="bg-dark/40 text-light border-light/20 basis-2/12 rounded-sm border px-2 py-1.5 text-center text-sm">
-                      {`${result?.percentage}%`}
+        {/* Image with overlay */}
+        <div className="group relative">
+          <div className="relative aspect-video w-full overflow-hidden rounded-xl border bg-gradient-to-br from-gray-50 to-gray-100 shadow-sm">
+            {previewImg ? (
+              <img
+                src={previewImg}
+                alt="Analyzed banana image"
+                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center text-gray-400">
+                <p>No image available</p>
+              </div>
+            )}
+
+            {/* Gradient overlay with result */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+            <div className="absolute right-4 bottom-4 left-4">
+              <div className="bg rounded-lg p-3 shadow-lg backdrop-blur-sm">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-semibold text-white">
+                      {topResult?.name}
                     </p>
-                    <div className="flex flex-1 flex-col justify-center gap-0.5">
-                      <Progress value={result?.percentage} />
-                      <p className="text-sm">{result?.name}</p>
-                    </div>
+                    <p className="text-sm text-white">Primary detection</p>
                   </div>
-                ))}
-            </div>
-
-            {/* Recommendation */}
-            <div className="flex flex-col gap-1 rounded-md">
-              <p className="text-dark rounded-md text-sm font-bold">
-                Recommendation
-              </p>
-              <div className="flex flex-col gap-1">
-                {rankedResults[0]?.recommendations?.map((recommend, index) => (
-                  <div
-                    className="bg-primary flex items-center gap-1 rounded-md px-2 py-2"
-                    key={index}
-                  >
-                    <p className="text-light rounded-md text-sm">{recommend}</p>
+                  <div className="text-right">
+                    <p className="text-lg font-bold text-white">
+                      {confidence}%
+                    </p>
+                    <p className="text-xs text-white">Confidence</p>
                   </div>
-                ))}
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </AlertDialogContent>
-    </AlertDialog>
+
+        {/* Detection Results */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <h4 className="text-base font-semibold text-gray-900">
+              Detection Results
+            </h4>
+            <Separator className="flex-1" />
+          </div>
+
+          <div className="space-y-3">
+            {filteredResults.map((result, index) => (
+              <div
+                key={index}
+                className="group rounded-lg border border-gray-200 bg-white p-4 transition-all duration-200 hover:border-gray-300 hover:shadow-sm"
+              >
+                <div className="flex items-center gap-4">
+                  {/* Rank indicator */}
+                  <div className="flex-shrink-0">
+                    <div
+                      className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold text-white ${
+                        index === 0
+                          ? "bg-primary"
+                          : index === 1
+                            ? "bg-gray-400"
+                            : "bg-gray-300"
+                      }`}
+                    >
+                      {index + 1}
+                    </div>
+                  </div>
+
+                  {/* Progress and details */}
+                  <div className="flex-1 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <p className="font-medium text-gray-900">
+                        {result?.name}
+                      </p>
+                      <Badge variant="outline" className="text-primary ml-2">
+                        {result?.percentage}%
+                      </Badge>
+                    </div>
+                    <Progress
+                      value={result?.percentage}
+                      className="h-2"
+                      style={{
+                        backgroundColor: "#f1f5f9",
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Recommendations */}
+        {topResult?.recommendations && topResult.recommendations.length > 0 && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <h4 className="text-base font-semibold text-gray-900">
+                Recommendations
+              </h4>
+              <Separator className="flex-1" />
+            </div>
+
+            <div className="rounded-xl bg-gradient-to-br shadow-sm">
+              <div className="space-y-4">
+                {topResult.recommendations.map((recommendation, index) => (
+                  <div
+                    key={index}
+                    className="border-primary/10 flex items-start gap-4 rounded-lg border bg-white p-4 shadow-sm transition hover:shadow-md"
+                  >
+                    {/* Number / Step circle */}
+                    <div className="bg-primary flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-white shadow">
+                      {index + 1}
+                    </div>
+
+                    {/* Recommendation text */}
+                    <div className="flex-1">
+                      <p className="text-sm leading-relaxed font-medium text-gray-800">
+                        {recommendation}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Action buttons */}
+        <div className="hidden flex-col gap-3 border-t border-gray-200 pt-4 sm:flex-row">
+          <Button
+            onClick={handleNewAnalysis}
+            className="flex-1 bg-blue-600 text-white hover:bg-blue-700"
+          >
+            <MdRefresh className="mr-2 h-4 w-4" />
+            Analyze Another Image
+          </Button>
+
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              className="hover:bg-gray-50"
+              title="Download Results"
+            >
+              <MdDownload className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="hover:bg-gray-50"
+              title="Share Results"
+            >
+              <MdShare className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </div>
+    </PlatformWrapper>
   );
 };
 

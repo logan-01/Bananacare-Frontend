@@ -43,3 +43,6 @@ next-env.d.ts
 /android
 /ios
 /out
+
+
+/backup

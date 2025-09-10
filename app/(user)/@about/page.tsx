@@ -1,95 +1,153 @@
 import Image from "next/image";
 import React from "react";
+import {
+  RiLeafLine,
+  RiTargetLine,
+  RiRocketLine,
+  RiShieldCheckLine,
+  RiPlantLine,
+  RiAwardLine,
+  RiTeamLine,
+  RiGlobalLine,
+} from "react-icons/ri";
+import { isNative } from "@/lib/constant";
+import { div } from "@tensorflow/tfjs";
 
 function page() {
+  const aboutCards = [
+    {
+      icon: "/img/About.svg",
+      title: "About BananaCare",
+      subtitle: "Revolutionary Technology",
+      description:
+        "BananaCare leverages cutting-edge AI and machine learning to provide farmers with real-time disease detection capabilities. Our advanced system analyzes banana plant images with 99% accuracy, enabling early intervention and sustainable farming practices.",
+      features: [
+        "AI-Powered Detection",
+        "Real-time Analysis",
+        "99% Accuracy Rate",
+        "Mobile Integration",
+      ],
+    },
+    {
+      icon: "/img/Mission.svg",
+      title: "Our Mission",
+      subtitle: "Empowering Farmers Worldwide",
+      description:
+        "To democratize agricultural technology by providing farmers with accessible, reliable, and intelligent tools for crop protection. We believe every farmer deserves access to professional-grade disease detection technology.",
+      features: [
+        "Global Accessibility",
+        "User-Friendly Design",
+        "Expert Support",
+        "Continuous Innovation",
+      ],
+    },
+    {
+      icon: "/img/Goal.svg",
+      title: "Our Goals",
+      subtitle: "Sustainable Agriculture Future",
+      description:
+        "We aim to reduce crop losses by 40% globally through early disease detection, increase farmer productivity, and contribute to food security while promoting environmentally sustainable farming practices.",
+      features: [
+        "40% Loss Reduction",
+        "Increased Productivity",
+        "Food Security",
+        "Eco-Friendly Solutions",
+      ],
+    },
+  ];
+
+  const stats = [
+    { number: "50K+", label: "Farmers Helped", icon: RiTeamLine },
+    { number: "99.2%", label: "Detection Accuracy", icon: RiShieldCheckLine },
+    { number: "25+", label: "Countries Served", icon: RiGlobalLine },
+    { number: "1M+", label: "Scans Processed", icon: RiLeafLine },
+  ];
+
   return (
     <section
-      className="mt-10 flex scroll-mt-20 flex-col gap-3 px-6 md:px-10 lg:px-28"
+      className={`flex scroll-mt-20 flex-col gap-8 px-6 md:px-10 lg:px-28 ${isNative ? "mt-4 pb-20" : "mb-16"}`}
       id="about"
     >
-      <div className="text-center">
-        <p className="font-clash-grotesk text-primary text-2xl font-semibold md:text-4xl">
-          <span className="text-secondary">Get to Know </span> BananaCare
+      {/* Header Section */}
+      <div className="mx-auto max-w-4xl text-center">
+        <div className="flex items-center justify-center">
+          <h2 className="font-clash-grotesk text-primary text-2xl font-semibold md:text-4xl">
+            <span className="text-secondary">Get to Know </span> Bananacare
+          </h2>
+        </div>
+        <p className="text-sm font-light md:text-base">
+          Uncover how BananaCare is redefining banana disease detection
         </p>
-        <p>Uncover how BananaCare is redefining banana disease detection</p>
       </div>
 
-      <div className="flex flex-col gap-4 md:mt-14 md:flex-row">
-        <div className="mt-10 flex-1 md:mt-0">
-          <div
-            className={`shadow-custom bg-primary/20 relative min-h-full basis-1/2 rounded-md`}
-          >
-            <div className="bg-light absolute -top-10 left-1/2 h-24 w-24 -translate-x-1/2 transform overflow-hidden rounded-full">
-              <Image
-                src="/img/About.svg"
-                fill
-                alt="Banana Tree Hero"
-                // className="w-[98%] md:w-[95%]"
-              />
-            </div>
+      {/* Main Cards Section */}
+      <div className="grid max-w-7xl grid-cols-1 gap-8 rounded-md lg:grid-cols-3">
+        {aboutCards.map((card, index) => (
+          <div key={index} className="bg-primary/80 rounded-md p-4">
+            <div className="group relative flex h-full flex-col overflow-hidden rounded-md border border-gray-100 bg-white shadow-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
+              {/* Background Gradient */}
+              {/* <div className="from-primary/5 to-secondary/5 absolute inset-0 bg-gradient-to-br via-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" /> */}
 
-            <div className="flex flex-col rounded-md px-8 pt-16 pb-4 text-justify">
-              <p className="text-primary text-center text-lg font-bold">
-                About BananaCare
-              </p>
-              <p className="font-medium">
-                BananaCare is a cutting-edge system that ds farmers with
-                real-time insights, enabling early disease detection and
-                healthier crops for sustainable farming.
-              </p>
+              {/* Floating Icon */}
+              <div className="relative mb-6 flex justify-center pt-8">
+                <div className="relative">
+                  <div className="flex h-20 w-20 items-center justify-center rounded-2xl transition-all duration-300 group-hover:scale-110">
+                    <Image
+                      src={card.icon}
+                      width={80}
+                      height={80}
+                      alt={card.title}
+                      className="transition-transform duration-300 group-hover:scale-110"
+                    />
+                  </div>
+                  {/* Glow Effect */}
+                  <div className="bg-primary/20 absolute inset-0 rounded-2xl opacity-0 blur-lg transition-opacity duration-300 group-hover:opacity-50" />
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="relative p-8 pt-0">
+                {/* Badge */}
+                <div className="bg-primary/10 text-primary mb-3 inline-block rounded-full px-3 py-1 text-xs font-semibold">
+                  {card.subtitle}
+                </div>
+
+                {/* Title */}
+                <h3 className="group-hover:text-primary mb-4 text-xl font-bold text-gray-900 transition-colors duration-300">
+                  {card.title}
+                </h3>
+
+                {/* Description */}
+                <p className="mb-6 text-justify text-sm leading-relaxed text-gray-600">
+                  {card.description}
+                </p>
+
+                {/* Features List */}
+                <div className="space-y-3">
+                  <h4 className="mb-3 text-sm font-semibold text-gray-900">
+                    Key Features:
+                  </h4>
+                  <div className="grid grid-cols-1 gap-2">
+                    {card.features.map((feature, featureIndex) => (
+                      <div
+                        key={featureIndex}
+                        className="flex items-center gap-3 rounded-lg p-2 transition-colors duration-200 hover:bg-gray-50"
+                      >
+                        <div className="bg-primary h-2 w-2 flex-shrink-0 rounded-full" />
+                        <span className="text-sm font-medium text-gray-700">
+                          {feature}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Accent */}
+              <div className="bg-primary absolute right-0 bottom-0 left-0 h-1 scale-x-0 transform bg-gradient-to-r transition-transform duration-500 group-hover:scale-x-100" />
             </div>
           </div>
-        </div>
-
-        <div className="mt-10 flex-1 md:mt-0">
-          <div
-            className={`shadow-custom bg-primary/20 relative min-h-full basis-1/2 rounded-md`}
-          >
-            <div className="bg-light absolute -top-10 left-1/2 h-24 w-24 -translate-x-1/2 transform overflow-hidden rounded-full">
-              <Image
-                src="/img/Mission.svg"
-                fill
-                alt="Banana Tree Hero"
-                // className="w-[98%] md:w-[95%]"
-              />
-            </div>
-            <div className="flex-col rounded-md px-8 pt-16 pb-4 text-justify">
-              <p className="text-primary text-center text-lg font-bold">
-                BananaCare Mission
-              </p>
-              <p className="font-medium">
-                Our mission is to equip farmers with a reliable, user-friendly
-                tool for early banana disease detection, enabling swift action
-                to safeguard their crops and ensure healthy yields.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-10 flex-1 md:mt-0">
-          <div
-            className={`shadow-custom bg-primary/20 relative min-h-full basis-1/2 rounded-md`}
-          >
-            <div className="bg-light absolute -top-10 left-1/2 h-24 w-24 -translate-x-1/2 transform overflow-hidden rounded-full">
-              <Image
-                src="/img/Goal.svg"
-                fill
-                alt="Banana Tree Hero"
-                // className="w-[98%] md:w-[95%]"
-              />
-            </div>
-            <div className="flex-col rounded-md px-8 pt-16 pb-4 text-justify">
-              <p className="text-primary text-center text-lg font-bold">
-                BananaCare Goal
-              </p>
-              <p className="font-medium">
-                Our goal is to ensure healthier banana plants and higher yields
-                through faster, more accurate disease detection, empowering
-                farmers to take proactive measures for sustainable farming.
-              </p>
-            </div>
-          </div>
-        </div>
+        ))}
       </div>
     </section>
   );

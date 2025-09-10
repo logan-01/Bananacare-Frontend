@@ -54,6 +54,13 @@ function DesktopNav() {
             : id.charAt(0).toUpperCase() + id.slice(1)}
         </li>
       ))}
+
+      <button
+        className="bg-primary text-light rounded-md px-4 py-2 font-medium hover:cursor-pointer hover:opacity-70"
+        onClick={() => handleNavClick("scan")}
+      >
+        Download
+      </button>
     </ul>
   );
 }

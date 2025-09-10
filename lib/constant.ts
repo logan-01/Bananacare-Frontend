@@ -7,6 +7,11 @@ import {
 import { TfiArrowsHorizontal, TfiArrowsVertical } from "react-icons/tfi";
 import { PiParallelogramThin, PiFlipHorizontalLight } from "react-icons/pi";
 import { IconType } from "react-icons/lib";
+import { Capacitor } from "@capacitor/core";
+import { FaTruckFast } from "react-icons/fa6";
+
+// export const isNative = Capacitor.isNativePlatform();
+export const isNative = false;
 
 export interface BananaDiseaseType {
   id: string;

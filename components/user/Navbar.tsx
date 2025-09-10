@@ -5,7 +5,7 @@ import MobileNav from "./MobileNav";
 
 function Navbar() {
   return (
-    <header className="bg-light sticky top-0 z-10 flex w-full px-6 py-2 md:px-10 lg:px-28">
+    <header className="bg-light sticky top-0 z-50 flex w-full px-6 py-2 md:px-10 lg:px-28">
       <div className="flex flex-1 items-center gap-2">
         <Image
           src="/img/BananaCare-Logomark.svg"

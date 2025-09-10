@@ -9,6 +9,7 @@ import {
   FaFacebook,
   FaInstagram,
 } from "react-icons/fa6";
+import { isNative } from "@/lib/constant";
 
 function Contact() {
   const contactInfo = [
@@ -138,7 +139,7 @@ function Contact() {
 
   return (
     <section
-      className="mt-2 scroll-m-12 px-6 py-10 md:px-10 lg:px-28"
+      className={`flex-1 scroll-m-16 px-6 md:px-10 lg:px-28 ${isNative ? "mt-4 pb-20" : "mb-16"}`}
       id="contact"
     >
       <div className={`mb-2 pb-5 text-center`}>
@@ -151,8 +152,8 @@ function Contact() {
         </p>
       </div>
 
-      <div className={`bg-primary/20 rounded-md p-6`}>
-        <div className="bg-primary flex flex-col gap-10 rounded-md border border-gray-400 p-7 md:flex-row dark:border-none dark:shadow-none">
+      <div className={`bg-primary/20 rounded-md`}>
+        <div className="bg-primary/80 flex flex-col gap-10 rounded-md border border-gray-400 p-7 md:flex-row dark:border-none dark:shadow-none">
           <div className="flex basis-4/12 flex-col gap-4">
             <p className="text-light text-2xl font-semibold">
               Let's talk on something{" "}

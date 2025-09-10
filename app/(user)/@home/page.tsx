@@ -1,58 +1,165 @@
 import React from "react";
-import Image from "next/image";
-import { auth } from "@/lib/auth";
-import Link from "next/link";
+import {
+  RiCameraLine,
+  RiBookOpenLine,
+  RiArrowRightSLine,
+  RiShieldCheckLine,
+  RiSparklingLine,
+  RiBarChartLine,
+} from "react-icons/ri";
+import { FaCheck } from "react-icons/fa6";
 
-// Client Components
-import ScanModal from "@/components/modals/ScanModal"; // Import the new component
-import MoreInfoButton from "@/components/user/MoreInfoButton";
+import PlatformWrapper from "@/components/wrapper/PlatformWrapper";
+import ScanForm from "@/components/user/ScanForm";
+import Guide from "@/components/user/Guide";
 
 async function page() {
-  const session = await auth();
+  const handleNavClick = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const features = [
+    {
+      icon: RiSparklingLine,
+      title: "AI-Powered",
+      description: "Advanced machine learning for accurate disease detection",
+    },
+    {
+      icon: RiShieldCheckLine,
+      title: "Instant Results",
+      description: "Get diagnosis and treatment recommendations in seconds",
+    },
+    {
+      icon: RiBarChartLine,
+      title: "Crop Protection",
+      description: "Protect your harvest and maximize yield potential",
+    },
+  ];
 
   return (
     <section
-      className="flex flex-1 scroll-mt-20 flex-col justify-between px-6 md:flex-row-reverse md:px-10 lg:px-28"
+      className="bg-image relative flex min-h-[80vh] flex-1 scroll-mt-20 flex-col px-6"
       id="home"
     >
-      <div className="flex flex-1 items-center justify-center">
-        <Image
-          src="/img/BananaTree-Hero.svg"
-          width={400}
-          height={400}
-          alt="Banana Tree Hero"
-          className="w-[98%] md:w-[95%]"
-        />
+      {/* Main */}
+      <div className="relative mt-0 flex h-[90vh] flex-col items-center justify-center gap-4 md:mt-0 md:pb-0">
+        {/* Main Heading */}
+        <div className="flex flex-col items-center justify-center gap-2 text-center md:w-[60%]">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium text-white/90 backdrop-blur-md">
+            <RiSparklingLine className="h-4 w-4" />
+            <span>AI-Powered Disease Detection</span>
+          </div>
+
+          <h1 className="font-clash-grotesk text-3xl font-semibold text-white md:text-6xl lg:text-6xl">
+            Detect Banana Disease
+            <br />
+            <span className="text-secondary">with Precision</span>
+          </h1>
+
+          <p className="mx-auto max-w-3xl text-base leading-relaxed text-white/90 md:text-lg">
+            Revolutionary AI technology that identifies banana diseases
+            instantly.
+            <span className="text-secondary font-semibold">
+              {" "}
+              Snap, analyze, and protect
+            </span>{" "}
+            your crops with professional-grade diagnostics in the palm of your
+            hand.
+          </p>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex w-full flex-col justify-center gap-2 sm:flex-row md:w-[60%] md:gap-4 md:px-10">
+          {/* Primary Scan Button */}
+          <PlatformWrapper
+            title="Scan Banana Disease"
+            trigger={
+              <button className="group bg-primary hover:bg-primary/90 flex w-full items-center justify-center gap-3 rounded-xl px-4 py-4 text-lg font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-xl sm:flex-1">
+                <RiCameraLine className="h-6 w-6" />
+                Start Scanning
+                <RiArrowRightSLine className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </button>
+            }
+          >
+            <ScanForm />
+          </PlatformWrapper>
+
+          {/* Secondary Guide Button */}
+          <PlatformWrapper
+            title="Capturing Guide"
+            trigger={
+              <button className="group flex w-full items-center justify-center gap-3 rounded-xl border-2 border-white/30 bg-white/10 px-4 py-4 text-lg font-semibold text-white backdrop-blur-md transition-all duration-300 hover:scale-105 hover:bg-white/20 sm:flex-1">
+                <RiBookOpenLine className="h-6 w-6" />
+                View Guide
+                <RiArrowRightSLine className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </button>
+            }
+          >
+            {/* <div className="p-6">
+              <h3 className="mb-4 text-xl font-bold text-gray-900">
+                Disease Guide
+              </h3>
+              <p className="mb-6 text-gray-600">
+                Comprehensive guide to banana diseases, symptoms, and treatment
+                methods.
+              </p>
+              <button
+                // onClick={() => handleNavClick("disease")}
+                className="bg-primary hover:bg-primary/90 rounded-lg px-6 py-2 text-white transition-colors"
+              >
+                Go to Disease Section
+              </button>
+            </div> */}
+            <Guide />
+          </PlatformWrapper>
+        </div>
+
+        {/* Scroll Indicator */}
+        <div className="absolute top-8 left-1/2 -translate-x-1/2 transform animate-bounce md:top-auto md:bottom-22">
+          <div className="flex h-10 w-6 justify-center rounded-full border-2 border-white/30">
+            <div className="mt-2 h-3 w-1 animate-pulse rounded-full bg-white/50" />
+          </div>
+        </div>
       </div>
 
-      <div className="flex flex-1 flex-col justify-center gap-3 text-center md:text-left">
-        <Image
-          src="/img/BananaCare-Wordmark.svg"
-          width={120}
-          height={50}
-          alt="BananaCare Wordmark"
-          className="hidden md:block"
-        />
+      {/* Features */}
+      <div className="flex flex-col items-center justify-center pb-20">
+        {/* Feature Heading */}
+        <div className="text-center">
+          <p className="text-secondary font-clash-grotesk text-3xl font-semibold md:text-5xl">
+            Features
+          </p>
+          <p className="text-light text-base md:text-lg">
+            Discover What Makes BananaCare Smarter
+          </p>
+        </div>
 
-        <h1 className="font-clash-grotesk text-2xl font-semibold whitespace-pre-line md:text-3xl lg:text-4xl">
-          Detect Banana Disease with Ease
-        </h1>
-        <p>
-          <span className="text-primary font-medium">
-            Snap. Upload. Diagnose.
-          </span>{" "}
-          Instantly detect banana tree diseases with AI-powered analysis.
-          Protect your crops, maximize your yield, and farm smarter—all in just
-          a few clicks.
-        </p>
+        {/* Feature Highlights */}
+        <div className="mt-8 grid w-full max-w-4xl grid-cols-1 gap-6 md:grid-cols-3">
+          {features.map((feature, index) => (
+            <div
+              key={index}
+              className="group rounded-xl border border-white/20 bg-white/10 p-6 backdrop-blur-md transition-all duration-300 hover:bg-white/20"
+            >
+              <div className="flex flex-col items-center space-y-3 text-center">
+                <div className="bg-primary/20 rounded-full p-3">
+                  <feature.icon className="text-primary h-8 w-8" />
+                </div>
+                <h3 className="text-lg font-semibold text-white">
+                  {feature.title}
+                </h3>
+                <p className="text-sm text-white/80">{feature.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
 
-        <div className="flex justify-center gap-5 lg:w-[70%]">
-          <ScanModal
-            trigger={<span>Scan Now</span>}
-            className="bg-primary text-light flex-1 rounded-md px-8 py-2 font-medium hover:cursor-pointer hover:opacity-70"
-          />
-
-          <MoreInfoButton />
+        <div className="flex items-center gap-2 pt-10">
+          <FaCheck className="text-primary text-xl" />
+          <p className="text-light">Scan. Detect. Protect.</p>
         </div>
       </div>
     </section>

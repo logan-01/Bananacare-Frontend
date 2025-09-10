@@ -3,6 +3,13 @@
 
 @custom-variant dark (&:is(.dark *));
 
+.bg-image {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+    /* black overlay */ url("../public/img/Banana_Leaves.png") center/cover
+      no-repeat;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
