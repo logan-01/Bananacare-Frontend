@@ -12,15 +12,10 @@ import { FaCheck } from "react-icons/fa6";
 import PlatformWrapper from "@/components/wrapper/PlatformWrapper";
 import ScanForm from "@/components/user/ScanForm";
 import Guide from "@/components/user/Guide";
+import { isNative } from "@/lib/constant";
+import AdminButton from "@/components/admin/AdminButton";
 
 async function page() {
-  const handleNavClick = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
   const features = [
     {
       icon: RiSparklingLine,
@@ -41,17 +36,15 @@ async function page() {
 
   return (
     <section
-      className="bg-image relative flex min-h-[80vh] flex-1 scroll-mt-20 flex-col px-6"
+      className={`bg-image relative flex min-h-[80vh] flex-1 scroll-mt-20 flex-col px-4 ${isNative ? "pb-10" : ""}`}
       id="home"
     >
       {/* Main */}
       <div className="relative mt-0 flex h-[90vh] flex-col items-center justify-center gap-4 md:mt-0 md:pb-0">
         {/* Main Heading */}
         <div className="flex flex-col items-center justify-center gap-2 text-center md:w-[60%]">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium text-white/90 backdrop-blur-md">
-            <RiSparklingLine className="h-4 w-4" />
-            <span>AI-Powered Disease Detection</span>
-          </div>
+          {/* Hidden Button to Navigate Admin */}
+          <AdminButton />
 
           <h1 className="font-clash-grotesk text-3xl font-semibold text-white md:text-6xl lg:text-6xl">
             Detect Banana Disease
@@ -98,21 +91,6 @@ async function page() {
               </button>
             }
           >
-            {/* <div className="p-6">
-              <h3 className="mb-4 text-xl font-bold text-gray-900">
-                Disease Guide
-              </h3>
-              <p className="mb-6 text-gray-600">
-                Comprehensive guide to banana diseases, symptoms, and treatment
-                methods.
-              </p>
-              <button
-                // onClick={() => handleNavClick("disease")}
-                className="bg-primary hover:bg-primary/90 rounded-lg px-6 py-2 text-white transition-colors"
-              >
-                Go to Disease Section
-              </button>
-            </div> */}
             <Guide />
           </PlatformWrapper>
         </div>

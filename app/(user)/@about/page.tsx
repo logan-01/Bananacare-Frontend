@@ -1,17 +1,14 @@
+"use client";
+
 import Image from "next/image";
 import React from "react";
 import {
   RiLeafLine,
-  RiTargetLine,
-  RiRocketLine,
   RiShieldCheckLine,
-  RiPlantLine,
-  RiAwardLine,
   RiTeamLine,
   RiGlobalLine,
 } from "react-icons/ri";
 import { isNative } from "@/lib/constant";
-import { div } from "@tensorflow/tfjs";
 
 function page() {
   const aboutCards = [
@@ -56,16 +53,9 @@ function page() {
     },
   ];
 
-  const stats = [
-    { number: "50K+", label: "Farmers Helped", icon: RiTeamLine },
-    { number: "99.2%", label: "Detection Accuracy", icon: RiShieldCheckLine },
-    { number: "25+", label: "Countries Served", icon: RiGlobalLine },
-    { number: "1M+", label: "Scans Processed", icon: RiLeafLine },
-  ];
-
   return (
     <section
-      className={`flex scroll-mt-20 flex-col gap-8 px-6 md:px-10 lg:px-28 ${isNative ? "mt-4 pb-20" : "mb-16"}`}
+      className={`flex scroll-mt-20 flex-col gap-8 px-4 md:px-10 lg:px-28 ${isNative ? "mt-6 pb-24" : "mb-16"}`}
       id="about"
     >
       {/* Header Section */}
@@ -86,7 +76,6 @@ function page() {
           <div key={index} className="bg-primary/80 rounded-md p-4">
             <div className="group relative flex h-full flex-col overflow-hidden rounded-md border border-gray-100 bg-white shadow-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
               {/* Background Gradient */}
-              {/* <div className="from-primary/5 to-secondary/5 absolute inset-0 bg-gradient-to-br via-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" /> */}
 
               {/* Floating Icon */}
               <div className="relative mb-6 flex justify-center pt-8">

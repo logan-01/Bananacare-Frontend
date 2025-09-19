@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useSession, signOut } from "next-auth/react";
+// import { useSession, signOut } from "next-auth/react";
 
 import {
   RiVirusLine,
@@ -27,7 +27,7 @@ import {
 function MobileNav() {
   const [activeNav, setActiveNav] = useState<string>("home");
   const checkboxRef = useRef<HTMLInputElement>(null);
-  const { data: session, status } = useSession();
+  // const { data: session, status } = useSession();
 
   const navItems = [
     { label: "Home", icon: RiHome5Line, key: "home" },
@@ -78,9 +78,9 @@ function MobileNav() {
     setActiveNav(id);
   };
 
-  const onLogout = async () => {
-    await signOut();
-  };
+  // const onLogout = async () => {
+  //   await signOut();
+  // };
 
   return (
     <nav className="flex flex-1 items-center justify-end md:hidden">

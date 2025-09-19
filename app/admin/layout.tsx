@@ -1,26 +1,40 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { Admin_Sidebar } from "@/components/admin/Admin_Sidebar";
-import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
+"use client";
 
-export default async function AdminLayout({
+import { useEffect } from "react";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { Admin_Sidebar } from "@/components/admin/Admin_Sidebar";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
+import Loader from "@/components/wrapper/Loader";
+export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth();
-  if (!session) {
-    redirect("/login");
-  } else if (session?.user?.email !== "bananacare@gmail.com") {
-    redirect("/");
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push("/login");
+    }
+  }, [user, loading, router]);
+
+  // Loader
+  if (loading) {
+    return <Loader />;
   }
 
-  console.log(session);
+  if (!user) {
+    return null;
+  }
 
   return (
-    <SidebarProvider className="">
-      <Admin_Sidebar />
-      <main className="bg-light flex-1 overflow-auto px-4">{children}</main>
+    <SidebarProvider>
+      <div className="flex h-screen w-full">
+        <Admin_Sidebar />
+        <main className="bg-light flex-1 overflow-y-auto">{children}</main>
+      </div>
     </SidebarProvider>
   );
 }

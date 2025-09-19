@@ -53,3 +53,7 @@ export const makePrediction = async (
       .sort((a, b) => b.percentage - a.percentage)
   ); // Sort descending
 };
+
+// [0.85, 0.10, 0.03, 0.02,0.32, 0.10, 0.21, 0.22] - predictionArray
+
+// ["black-sigatoka", "bmv", "cordana" , "healthy","moko","panama","not-banana", "weevil" ]

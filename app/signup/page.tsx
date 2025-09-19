@@ -1,19 +1,40 @@
-import React from "react";
+"use client";
+
+import React, { useEffect } from "react";
 import SignupForm from "@/components/user/SignupForm";
-import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 
-async function SignupPage() {
-  const session = await auth();
-  if (session) redirect("/");
+function SignupPage() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
 
-  return (
-    <div className="bg-primary/80 flex h-screen w-screen items-center justify-center">
-      <div className="bg-light border-primary z-50 flex h-fit max-h-[95vh] w-[95vw] flex-col overflow-y-auto rounded-md border px-6 py-6 shadow-xl md:w-[45vw] md:px-10">
-        <SignupForm type="full" />
+  useEffect(() => {
+    if (!loading && user) {
+      router.push("/admin");
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="border-primary h-12 w-12 animate-spin rounded-full border-b-2"></div>
+          <p className="text-sm text-gray-600">Loading...</p>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="bg-light bg-image flex h-screen items-center justify-center">
+        <div className="bg-light z-50 flex h-[100vh] max-h-[95vh] w-[95vw] flex-col overflow-y-auto rounded-lg border border-gray-300 px-6 py-6 shadow-xl md:w-[40vw] md:px-10">
+          <SignupForm type="full" />
+        </div>
+      </div>
+    );
+  }
 }
 
 export default SignupPage;

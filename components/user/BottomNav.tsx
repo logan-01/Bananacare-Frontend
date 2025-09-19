@@ -43,7 +43,7 @@ function BottomNav({ activeTab, onChangeTab }: BottomNavProps) {
 
   return (
     <>
-      <div className="bg-light fixed bottom-0 z-[9999] mt-20 flex w-screen border-t px-2 py-2 drop-shadow-md">
+      <div className="bg-light fixed bottom-0 z-[9999] mt-20 flex w-screen px-2 py-2 shadow-md drop-shadow-md">
         {navItems.map((item, index) => (
           <div
             className={`flex flex-1 flex-col items-center justify-center ${activeTab === item.key ? "" : ""}`}
@@ -79,14 +79,14 @@ function BottomNav({ activeTab, onChangeTab }: BottomNavProps) {
                 )}
 
                 <div className="flex h-[50px] w-[50px] items-center justify-center rounded-full bg-white/90 backdrop-blur-sm">
-                  {/* <item.icon className="text-primary text-xl" /> */}
+                  <item.icon className="text-primary text-xl" />
 
-                  <Image
+                  {/* <Image
                     src={"/img/BananaCare-Logomark.svg"}
                     width={25}
                     height={25}
                     alt="Banacare Lo"
-                  />
+                  /> */}
                 </div>
               </div>
             )}

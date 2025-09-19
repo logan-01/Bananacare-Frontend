@@ -1,84 +1,143 @@
-import React from "react";
-import Admin_Header from "@/components/admin/Admin_Header";
-import { LuScanLine, LuTrendingUp } from "react-icons/lu";
-import MiniCard from "@/components/admin/MiniCard";
-import { Admin_BarChart } from "@/components/admin/Admin_BarChart";
-import Admin_StackBarChart from "@/components/admin/Admin_StackBarChart";
-import Image from "next/image";
-import { columns } from "@/components/admin/Admin_DataTable/columns";
-import { DataTable } from "@/components/admin/Admin_DataTable/data-table";
-import { fetchDashboardData } from "@/lib/data";
+"use client";
+import React, { useState, useEffect } from "react";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
-async function AdminHome() {
-  const { scanResults, stackedChartData, totalScanCount, diseaseStats } =
-    await fetchDashboardData();
+import {
+  ScanLine,
+  Check,
+  ShieldAlert,
+  MapPin,
+  Calendar,
+  ShieldPlus,
+  AlertTriangle,
+  Eye,
+} from "lucide-react";
 
-  const chartData = diseaseStats.map(({ key, count }) => ({
-    key: key === "bmv" ? "bract-mosaic-virus" : key,
-    value: count,
-    fill: `var(--color-${key})`,
-  }));
+import RecentActivity from "@/components/admin/RecentActivity";
+import TopConditions from "@/components/admin/TopConditions";
+import StatCard from "@/components/admin/StatCard";
+import ScanTrends from "@/components/admin/ScanTrends";
+import DiseaseDistribution from "@/components/admin/DiseaseDistribution";
 
-  const cardData = [
+import useScanResult from "@/hooks/useScanResult";
+import {
+  getScanStat,
+  getWeeklyTrends,
+  getDiseaseDistribution,
+} from "@/lib/helper";
+// import { ScanResultType } from "@/components/admin/Admin_DataTable/columns";
+// import { ScanResult } from "../generated/prisma";
+// import { ScanResultType } from "@/backup/admin_components/Admin_DataTable/columns";
+
+function page() {
+  const scanResult = useScanResult();
+
+  // Configuration for Stat Cards
+  const {
+    totalScans,
+    totalHealthy,
+    totalDiseased,
+    totalLocations,
+    latestScanDate,
+  } = getScanStat(scanResult);
+  const totalHealthyPercentage = totalScans
+    ? ((totalHealthy / totalScans) * 100).toFixed(1)
+    : 0;
+
+  const statsConfig = [
     {
-      icon: <LuScanLine className="text-primary size-5" />,
-      label: "Total Disease Reports",
-      data: totalScanCount,
+      icon: ScanLine,
+      title: "Total Scans",
+      value: totalScans,
+      subtitle: `${latestScanDate}`,
+      subtitleIcon: Calendar,
+      borderColor: "border-l-blue-500",
+      iconBgColor: "bg-blue-100",
+      iconColor: "text-blue-600",
+      subtitleColor: "text-blue-600",
     },
-    ...diseaseStats.map(({ key, percent }) => ({
-      icon: (
-        <Image
-          src={`/img/${key.replace(/-/g, "_")}_Icon.png`}
-          width={30}
-          height={30}
-          alt={key}
-        />
-      ),
-      label:
-        key === "bmv"
-          ? "Bract Mosaic Virus"
-          : key.charAt(0).toUpperCase() + key.slice(1).replace(/-/g, " "),
-      data: percent,
-    })),
+    {
+      icon: Check,
+      title: "Healthy Bananas",
+      value: totalHealthy,
+      subtitle: `${totalHealthyPercentage}% of total scans`,
+      subtitleIcon: ShieldPlus,
+      borderColor: "border-l-green-500",
+      iconBgColor: "bg-green-100",
+      iconColor: "text-green-600",
+      subtitleColor: "text-green-600",
+    },
+    {
+      icon: AlertTriangle,
+      title: "Disease Bananas",
+      value: totalDiseased,
+      subtitle: "Requires attention",
+      subtitleIcon: ShieldAlert,
+      borderColor: "border-l-red-500",
+      iconBgColor: "bg-red-100",
+      iconColor: "text-red-600",
+      subtitleColor: "text-red-600",
+    },
+    {
+      icon: MapPin,
+      title: "Active Locations",
+      value: totalLocations,
+      subtitle: "Monitoring sites",
+      subtitleIcon: Eye,
+      borderColor: "border-l-orange-500",
+      iconBgColor: "bg-orange-100",
+      iconColor: "text-orange-600",
+      subtitleColor: "text-orange-600",
+    },
   ];
 
-  const chartConfig = {
-    value: { label: "Disease" },
-    "black-sigatoka": { label: "Black Sigatoka" },
-    cordana: { label: "Cordana" },
-    "bract-mosaic-virus": { label: "Bract Mosaic Virus" },
-    moko: { label: "Moko" },
-    panama: { label: "Panama" },
-    weevil: { label: "Weevil" },
-    healthy: { label: "Healthy" },
-  };
+  // Configuration for Scan Trends
+  const {
+    weeklyTrends,
+    weeklyTotalHealthy,
+    weeklyTotalDiseased,
+    weeklyTotalScans,
+  } = getWeeklyTrends(scanResult);
+
+  const scanTrendsConfig = [
+    { color: "#187498", label: "Scans", count: weeklyTotalScans ?? 0 },
+    { color: "#22b123", label: "Healthy", count: weeklyTotalHealthy ?? 0 },
+    { color: "#F93827", label: "Diseased", count: weeklyTotalDiseased ?? 0 },
+  ];
+
+  // Configuration for Disease Distribution
+  const diseaseDistribution = getDiseaseDistribution(scanResult);
 
   return (
-    <div>
-      <Admin_Header title="Overview" />
-      <div className="bg-primary/20 flex h-full flex-col gap-2 rounded-2xl border-none p-4">
-        {/* Card */}
-        <div className="bg-light grid grid-cols-2 gap-2 rounded-md p-2 md:grid-cols-4">
-          {cardData.map((card, index) => (
-            <MiniCard
-              key={index}
-              icon={card.icon}
-              label={card.label}
-              data={card.data}
-            />
+    <div className="flex h-full w-full flex-col overflow-y-auto px-6">
+      {/* Header */}
+      <div className="py-6">
+        <div className="flex items-center gap-2">
+          <SidebarTrigger />
+          <p className="font-clash-grotesk text-2xl font-semibold">Overview</p>
+        </div>
+      </div>
+
+      {/* Body */}
+      <div className="mb-10 flex flex-col gap-4">
+        {/* Stats Cards */}
+        <div className="grid gap-4 md:grid-cols-4">
+          {statsConfig.map((config, index) => (
+            <StatCard key={index} {...config} />
           ))}
         </div>
 
-        {/* Graph */}
-        <div className="flex flex-col gap-2 md:flex-row">
-          <Admin_StackBarChart chartData={stackedChartData} />
-          <Admin_BarChart chartConfig={chartConfig} chartData={chartData} />
+        {/* Graphs */}
+        <div className="flex flex-col gap-4 md:flex-row">
+          <ScanTrends data={weeklyTrends} config={scanTrendsConfig} />
+          <DiseaseDistribution data={diseaseDistribution} />
         </div>
 
-        <DataTable columns={columns} data={scanResults.slice(0, 5)} />
+        <TopConditions data={diseaseDistribution} />
+        <RecentActivity data={scanResult} />
       </div>
     </div>
   );
 }
 
-export default AdminHome;
+export default page;

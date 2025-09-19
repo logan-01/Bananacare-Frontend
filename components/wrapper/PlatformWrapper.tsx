@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { Capacitor } from "@capacitor/core";
 import { MdArrowBack } from "react-icons/md";
 import {
   AlertDialog,
@@ -117,7 +116,7 @@ const PlatformWrapper: React.FC<PlatformWrapperProps> = ({
           className={`fixed inset-0 z-[999] flex min-h-screen w-screen flex-1 flex-col ${isNative ? "pb-20" : ""} ${className}`}
         >
           {showHeader && (
-            <div className="bg-primary text-light flex items-center gap-4 px-4 py-4 font-semibold">
+            <div className="text-primary flex items-center gap-4 px-4 py-4 font-semibold shadow-sm">
               {showBackButton && (
                 <MdArrowBack
                   className="cursor-pointer text-xl hover:cursor-pointer hover:opacity-70"

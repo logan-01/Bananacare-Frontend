@@ -1,14 +1,6 @@
 import Image from "next/image";
+
 import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogCancel,
-} from "@/components/ui/alert-dialog";
-import {
-  MdClose,
-  MdLock,
   MdWarning,
   MdInfo,
   MdLocalHospital,
@@ -26,19 +18,15 @@ import {
 import { MdAlarm } from "react-icons/md";
 import PlatformWrapper from "../wrapper/PlatformWrapper";
 
-import { isNative } from "@/lib/constant";
+import { isNative, BananaDiseaseType } from "@/lib/constant";
 
-const DiseaseModal = ({
-  isOpen,
-  onClose,
-  disease,
-  session,
-}: {
+interface DiseaseModalProps {
   isOpen: boolean;
   onClose: () => void;
-  disease: any;
-  session: any;
-}) => {
+  disease: BananaDiseaseType | null;
+}
+
+const DiseaseModal = ({ isOpen, onClose, disease }: DiseaseModalProps) => {
   if (!isOpen || !disease) return null;
 
   const getSeverityIcon = (severity: string) => {
@@ -97,38 +85,23 @@ const DiseaseModal = ({
     }
   };
 
-  // Mock treatment data - in real app this would come from your disease data
-  const treatmentMethods = [
-    "Apply copper-based fungicides during early morning",
-    "Remove affected leaves and dispose properly",
-    "Improve drainage and air circulation",
-    "Use resistant banana cultivars when replanting",
-  ];
-
-  const preventionTips = [
-    "Regular monitoring of plantation",
-    "Maintain proper spacing between plants",
-    "Implement crop rotation practices",
-    "Use certified disease-free planting material",
-  ];
-
   return (
     <PlatformWrapper
       open={isOpen}
       onOpenChange={onClose}
-      title={disease.title}
-      nativeTitleClass="text-left font-bold text-xl"
+      title={disease.name}
+      nativeTitleClass="text-left "
     >
       <div
-        className={`border-primary/60 overflow-hidden rounded-md border-4 ${!isNative ? "mx-4" : "mx-0"}`}
+        className={`border-primary/60 overflow-hidden rounded-md border-1 ${!isNative ? "mx-0" : "mx-0"}`}
       >
         {/* Hero Image Section */}
         <div className="">
           <div className="relative h-64 w-full md:h-80">
             <Image
-              src={disease.image}
+              src={disease.imgUrl || ""}
               fill
-              alt={disease.title}
+              alt={disease.name || ""}
               className="object-cover"
             />
 
@@ -157,13 +130,13 @@ const DiseaseModal = ({
         </div>
 
         {/* Content Section */}
-        <div className="bg-light">
+        <div className="bg-primary/10">
           {" "}
           <div className="space-y-6 p-6">
             {/* Disease Info */}
             <div>
               <h2 className="text-primary mb-3 text-2xl font-bold">
-                {disease.title}
+                {disease.name}
               </h2>
               <p className="text-justify text-sm leading-relaxed text-gray-600">
                 {disease.description}
@@ -202,7 +175,7 @@ const DiseaseModal = ({
                 </h3>
               </div>
               <ul className="space-y-2">
-                {treatmentMethods.map((treatment, index) => (
+                {disease?.treatmentMethods?.map((treatment, index) => (
                   <li
                     key={index}
                     className="flex items-start gap-2 text-green-700"
@@ -223,7 +196,7 @@ const DiseaseModal = ({
                 </h3>
               </div>
               <ul className="space-y-2">
-                {preventionTips.map((tip, index) => (
+                {disease?.preventionTips?.map((tip, index) => (
                   <li
                     key={index}
                     className="flex items-start gap-2 text-blue-700"
@@ -248,18 +221,6 @@ const DiseaseModal = ({
                 agricultural expert or plant pathologist for personalized
                 treatment recommendations.
               </p>
-              {session ? (
-                <button className="bg-primary hover:bg-primary/90 rounded-lg px-6 py-2 font-medium text-white transition-colors duration-200">
-                  Schedule Consultation
-                </button>
-              ) : (
-                <div className="flex items-center justify-center gap-2 text-gray-500">
-                  <MdLock className="h-4 w-4" />
-                  <span className="text-sm">
-                    Login required for consultations
-                  </span>
-                </div>
-              )}
             </div>
 
             {/* Action Buttons */}

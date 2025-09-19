@@ -95,7 +95,7 @@ const Guide = () => {
               {[
                 { id: "basics", label: "Basics", icon: Info },
                 { id: "examples", label: "Examples", icon: Eye },
-                { id: "steps", label: "Step by Step", icon: Zap },
+                { id: "steps", label: "Steps", icon: Zap },
               ].map(({ id, label, icon: Icon }) => (
                 <button
                   key={id}

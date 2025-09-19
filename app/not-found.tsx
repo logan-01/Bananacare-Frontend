@@ -1,21 +1,28 @@
 "use client";
 
-// pages/404.js
-import { useEffect } from "react";
+import React from "react";
 
-export default function Custom404() {
-  // useEffect(() => {
-  //   const timeout = setTimeout(() => {
-  //     window.location.reload();
-  //   }, 1); // reload after 5 seconds
-
-  //   return () => clearTimeout(timeout);
-  // }, []);
+export default function ErrorPage() {
+  const handleBackClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    window.history.back();
+  };
 
   return (
-    <div className="bg-primary/80">
-      {/* <h1>404 - Page Not Found</h1>
-      <p>Reloading in 5 seconds...</p> */}
+    <div className="bg-light flex h-screen w-screen flex-col items-center justify-center -space-y-20">
+      <img src="/img/404.svg" alt="404" width={450} height={450} className="" />
+      <div className="text-center">
+        <p className="font-clash-grotesk text-primary text-7xl font-medium md:text-9xl">
+          404 PAGE
+        </p>
+        <p className="">The page you were looking for could not be found</p>
+        <button
+          className="bg-primary text-light mt-4 w-full rounded-md py-2 text-lg font-medium hover:cursor-pointer hover:opacity-70"
+          onClick={handleBackClick}
+        >
+          Back to previous page
+        </button>
+      </div>
     </div>
   );
 }

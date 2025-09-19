@@ -1,64 +1,51 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import Navbar from "@/components/user/Navbar";
-import BottomNav from "@/components/user/BottomNav";
-import Footer from "@/components/user/Footer";
-import ScanButton from "@/components/user/ScanButton";
-
+import React from "react";
 import { isNative } from "@/lib/constant";
+import NativeLayout from "@/components/layout/NativeLayout";
+import WebLayout from "@/components/layout/WebLayout";
 
-function UserLayout({
-  auth,
-  home,
-  disease,
-  contact,
-  about,
-  scan,
-}: {
-  auth: React.ReactNode;
+import { useState, useEffect } from "react";
+import Loader from "@/components/wrapper/Loader";
+
+interface UserLayoutProps {
   home: React.ReactNode;
   disease: React.ReactNode;
   contact: React.ReactNode;
   about: React.ReactNode;
-  scan: React.ReactNode;
-}) {
-  // useEffect(() => {
-  //   if (window.location.hash === "#_=_") {
-  //     // Remove the fragment
-  //     history.replaceState(null, "", window.location.pathname);
-  //   }
-  // }, []);
+}
 
-  // Track Zctive Tab (only used in native mode)
-  const [activeTab, setActiveTab] = useState<
-    "home" | "disease" | "about" | "contact" | "scan"
-  >("home");
+function UserLayout({ home, disease, contact, about }: UserLayoutProps) {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <>
       {!isNative ? (
-        //Web Layout
-        <div className="flex h-full flex-1 flex-col">
-          <Navbar />
-          {home}
-          {disease}
-          {about}
-          {contact}
-          <Footer />
-          <ScanButton />
-        </div>
+        <WebLayout
+          home={home}
+          disease={disease}
+          about={about}
+          contact={contact}
+        />
       ) : (
-        //Native Layout
-        <div className="flex h-screen flex-col">
-          <div className="flex flex-1">
-            {activeTab === "home" && home}
-            {activeTab === "disease" && disease}
-            {activeTab === "about" && about}
-            {activeTab === "contact" && contact}
-          </div>
-          <BottomNav activeTab={activeTab} onChangeTab={setActiveTab} />
-        </div>
+        <NativeLayout
+          home={home}
+          disease={disease}
+          about={about}
+          contact={contact}
+        />
       )}
     </>
   );

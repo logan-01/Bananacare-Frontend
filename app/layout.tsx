@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { Raleway } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
-import { SessionProvider } from "next-auth/react";
-import { auth } from "@/lib/auth";
 
-import Head from "next/head";
+import "leaflet/dist/leaflet.css";
+import "react-leaflet-cluster/dist/assets/MarkerCluster.css";
+import "react-leaflet-cluster/dist/assets/MarkerCluster.Default.css";
 
 const raleway = Raleway({
   variable: "--font-raleway",
@@ -27,13 +27,18 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth();
   return (
     <html lang="en" className="scroll-smooth antialiased">
+      <head>
+        <meta
+          name="viewport"
+          content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
+      </head>
       <body
         className={`${raleway.variable} ${clashGrotesk.variable} text-dark bg-light flex min-h-screen flex-col`}
       >
-        <SessionProvider session={session}>{children}</SessionProvider>
+        {children}
       </body>
     </html>
   );

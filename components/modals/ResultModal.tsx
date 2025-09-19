@@ -28,6 +28,7 @@ interface ResultModalProps {
   rankedResults: BananaDiseaseType[];
   resetForm?: () => void;
   previewImg: string | null;
+  isOfflineResult?: boolean;
 }
 
 const ResultModal: React.FC<ResultModalProps> = ({
@@ -36,6 +37,7 @@ const ResultModal: React.FC<ResultModalProps> = ({
   rankedResults,
   resetForm,
   previewImg,
+  isOfflineResult = false,
 }) => {
   const handleClose = () => {
     onClose();
@@ -86,11 +88,35 @@ const ResultModal: React.FC<ResultModalProps> = ({
   const ConfidenceIcon = confidenceStatus.icon;
 
   const filteredResults = rankedResults.filter(
-    (item) => item.name.toLowerCase() !== "not banana",
+    (item) => item.id !== "not-banana",
   );
 
   return (
     <PlatformWrapper open={open} onOpenChange={handleClose} title="Scan Result">
+      {isOfflineResult && (
+        <div className="mb-4 flex items-center gap-3 rounded-lg border border-blue-200 bg-blue-50 p-2">
+          <div className="flex-shrink-0">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100">
+              <MdInfo className="h-4 w-4 text-blue-600" />
+            </div>
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-medium text-blue-900">
+              Scan saved offline
+            </p>
+            <p className="text-xs text-blue-700">
+              Results processed and stored locally for offline access
+            </p>
+          </div>
+          <Badge
+            variant="secondary"
+            className="border-blue-200 bg-blue-100 text-blue-800"
+          >
+            Offline
+          </Badge>
+        </div>
+      )}
+
       <div className="space-y-6">
         {/* Header with confidence indicator */}
         <div className="flex items-center justify-between">

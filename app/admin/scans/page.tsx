@@ -1,27 +1,27 @@
+"use client";
+
 import React from "react";
-import Admin_Header from "@/components/admin/Admin_Header";
-import { columns } from "@/components/admin/Admin_DataTable/columns";
-import { DataTable } from "@/components/admin/Admin_DataTable/data-table";
-import prisma from "@/lib/prisma";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import ScanTable from "@/components/admin/ScanTable";
+import useScanResult from "@/hooks/useScanResult";
 
-async function page() {
-  const scanResults = await prisma.scanResult.findMany({
-    select: {
-      address: true,
-      createdAt: true,
-      result: true,
-      percentage: true,
-      imgUrl: true,
-      resultArr: true,
-    },
-    orderBy: { createdAt: "desc" },
-  });
-
+function page() {
+  const scanResult = useScanResult();
   return (
-    <div>
-      <Admin_Header title="Scans" />
-      <div className="bg-primary/10 h-full flex-1 rounded-2xl p-4">
-        <DataTable columns={columns} data={scanResults} />
+    <div className="flex h-full w-full flex-col overflow-y-auto px-6">
+      {/* Header */}
+      <div className="py-6">
+        <div className="flex items-center gap-2">
+          <SidebarTrigger />
+          <p className="font-clash-grotesk text-2xl font-semibold">
+            Scan Results{" "}
+          </p>
+        </div>
+      </div>
+
+      {/* Body */}
+      <div className="mb-10 flex flex-col gap-4">
+        <ScanTable data={scanResult} />
       </div>
     </div>
   );
