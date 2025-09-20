@@ -9,7 +9,9 @@
     "start": "next start",
     "lint": "next lint",
     "static": "next build && next export",
-    "preview": "npx serve out"
+    "preview": "npx serve out",
+    "cap:build": "npm run build && npx cap sync",
+    "cap:android": "npx cap sync && npx cap open android"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.3",

@@ -9,8 +9,8 @@ import { PiParallelogramThin, PiFlipHorizontalLight } from "react-icons/pi";
 import { IconType } from "react-icons/lib";
 import { Capacitor } from "@capacitor/core";
 
-export const isNative = Capacitor.isNativePlatform();
-// export const isNative = false;
+// export const isNative = Capacitor.isNativePlatform();
+export const isNative = false;
 
 export interface BananaDiseaseType {
   id: string;
@@ -122,7 +122,7 @@ export const bananaDiseases: BananaDiseaseType[] = [
     type: "Viral",
     severity: "Medium",
     color: "#6A0066",
-    textColor: "#26333a",
+    textColor: "#fbfefa",
     imgUrl: "/img/Banana-Bract-Mosaic-Virus.jpg",
     iconUrl: "/img/BMV_Icon.png",
     shortDescription:

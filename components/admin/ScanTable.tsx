@@ -18,6 +18,7 @@ import {
   Columns2,
   Eraser,
   Check,
+  Trash2,
 } from "lucide-react";
 import { FaFileCsv, FaRegFileExcel, FaRegFilePdf } from "react-icons/fa";
 import { BsFiletypeCsv, BsFiletypeJson } from "react-icons/bs";
@@ -53,6 +54,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import ResultModal from "../modals/ResultModal";
+import DeleteModal from "../modals/DeleteModal";
 import { bananaDiseases, ScanResultType } from "@/lib/constant";
 import {
   Pagination,
@@ -68,9 +70,10 @@ import * as XLSX from "xlsx";
 // Main component
 interface ScanTableProps {
   data: ScanResultType[];
+  onDelete?: (id: string) => void; // Add this line
 }
 
-function ScanTable({ data }: ScanTableProps) {
+function ScanTable({ data, onDelete }: ScanTableProps) {
   const diseaseTypes = bananaDiseases
     .filter((disease) => disease.id !== "not-banana")
     .map((disease) => disease.id);
@@ -85,10 +88,12 @@ function ScanTable({ data }: ScanTableProps) {
     {},
   );
 
-  const [showModal, setShowModal] = useState(false);
+  const [showResultModal, setShowResultModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedResult, setSelectedResult] = useState<ScanResultType | null>(
     null,
   );
+  const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
 
   // Table state
   const [searchTerm, setSearchTerm] = useState("");
@@ -222,6 +227,24 @@ function ScanTable({ data }: ScanTableProps) {
     setResultFilter("all");
     setDateFilter("all");
     setCurrentPage(1);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!onDelete) return;
+
+    setDeletingIds((prev) => new Set(prev).add(id));
+
+    try {
+      onDelete(id);
+    } catch (error) {
+      console.error("Error deleting item:", error);
+    } finally {
+      setDeletingIds((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(id);
+        return newSet;
+      });
+    }
   };
 
   // Export functions
@@ -386,6 +409,8 @@ function ScanTable({ data }: ScanTableProps) {
         console.error("Unsupported export format");
     }
   };
+
+  console.log("Scan Table", data);
 
   return (
     <>
@@ -656,7 +681,11 @@ function ScanTable({ data }: ScanTableProps) {
                   {currentData.map((item) => (
                     <tr
                       key={item.id}
-                      className="transition-colors duration-200 hover:bg-gray-50"
+                      className={`transition-colors duration-200 ${
+                        deletingIds.has(item.id)
+                          ? "animate-pulse cursor-not-allowed bg-red-50 opacity-60"
+                          : "hover:bg-gray-50"
+                      }`}
                     >
                       <td className="px-6 py-4 whitespace-nowrap">
                         <img
@@ -717,19 +746,36 @@ function ScanTable({ data }: ScanTableProps) {
                           {item.result}
                         </Badge>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="bg-primary hover:bg-primary/90 text-white"
-                          onClick={() => {
-                            setShowModal(true);
-                            setSelectedResult(item);
-                          }}
-                        >
-                          <Eye className="mr-1 h-4 w-4" />
-                          View Details
-                        </Button>
+
+                      {/* Actions */}
+                      <td className={`px-6 py-4 whitespace-nowrap`}>
+                        <div className="flex space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="bg-primary hover:bg-primary/90 border-primary text-white"
+                            onClick={() => {
+                              setShowResultModal(true);
+                              setSelectedResult(item);
+                            }}
+                          >
+                            <Eye className="mr-1 h-4 w-4" />
+                            View Details
+                          </Button>
+
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="border-red-500 bg-red-500 text-white hover:bg-red-600"
+                            onClick={() => {
+                              setSelectedResult(item);
+                              setShowDeleteModal(true);
+                            }}
+                            disabled={deletingIds.has(item.id)}
+                          >
+                            Delete
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -851,10 +897,22 @@ function ScanTable({ data }: ScanTableProps) {
       </Card>
 
       <ResultModal
-        open={showModal}
-        onClose={() => setShowModal(false)}
+        open={showResultModal}
+        onClose={() => setShowResultModal(false)}
         rankedResults={selectedResult?.resultArr || []}
         previewImg={selectedResult?.imgUrl || null}
+      />
+
+      <DeleteModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={() => {
+          if (selectedResult) {
+            handleDelete(selectedResult.id);
+            setShowDeleteModal(false);
+            setSelectedResult(null);
+          }
+        }}
       />
     </>
   );

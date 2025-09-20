@@ -9,8 +9,7 @@ import {
   Image as ImageIcon,
   CheckCircle2,
   CircleX,
-  Ban,
-  CircleAlert,
+  ImageOff,
 } from "lucide-react";
 import {
   FormControl,
@@ -83,38 +82,39 @@ function ImageInput({
   };
 
   return (
-    <FormItem className="space-y-0">
+    <FormItem className="rounded-md border-2 border-gray-300 p-4">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <FormLabel className="flex items-center gap-2 text-base font-semibold text-gray-900">
           <ImageIcon className="h-4 w-4" />
           Upload Image
         </FormLabel>
         {previewImg && (
-          <Badge variant="secondary" className="bg-green-100 text-green-800">
+          <Badge variant="secondary" className="bg-primary/5 text-primary">
             <CheckCircle2 className="mr-1 h-3 w-3" />
-            Image loaded
+            Image Loaded
           </Badge>
         )}
 
         {fileRejections.length > 0 && (
-          <Badge variant="secondary" className="bg-red-100 text-red-800">
+          <Badge variant="secondary" className="bg-danger/5 text-danger">
             <CircleX className="mr-1 h-3 w-3" />
-            Unsupported File Type
+            Unsupported File
           </Badge>
         )}
       </div>
 
       {!previewImg ? (
-        <Card className="border-2 border-dashed border-gray-200 bg-gray-50/50 transition-all duration-200 hover:border-gray-300 hover:bg-gray-50">
-          <CardContent className="p-0">
+        <Card className="border-none p-0 shadow-none">
+          <CardContent className="space-y-3 border-0 p-0 outline-0">
             {/* Error handling */}
             {fileRejections.length > 0 ? (
-              <div className="mx-6 flex items-center gap-2 rounded-md border border-red-200 bg-red-50 p-3">
-                <Ban className="h-5 w-5 text-red-500" />
-                <p className="text-sm font-medium text-red-800">
+              <div className="border-danger/20 bg-danger/5 mb-4 flex items-center gap-2 rounded-md border p-3">
+                <ImageOff className="text-danger h-5 w-5" />
+                <p className="text-danger text-sm font-medium">
                   Oops!{" "}
                   {fileRejections.map(({ file, errors }) => (
-                    <span key={file.name} className="text-primary">
+                    <span key={file.name} className="underline">
                       {file.name}
                     </span>
                   ))}{" "}
@@ -123,17 +123,48 @@ function ImageInput({
               </div>
             ) : (
               //  Warning Alert
-              <div className="mx-6 flex items-center gap-2 rounded-md border border-orange-200 bg-orange-50 p-3">
+              <div className="border-normal/20 bg-normal/5 mb-4 flex items-center gap-2 rounded-md border p-3">
                 <div className="flex items-center gap-2">
-                  <CircleAlert className="h-5 w-5 text-orange-500" />
-                  <p className="text-sm font-medium text-orange-800">
-                    Important: Only upload clear image of banana only
+                  <ImageIcon className="text-normal h-5 w-5" />
+                  <p className="text-normal text-sm font-medium">
+                    Only upload clear image of banana only
                   </p>
                 </div>
               </div>
             )}
 
-            <div className="p-6">
+            <div className="space-y-6">
+              {/* Camera Option for Mobile */}
+              {isNative && (
+                <div className="">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleCameraCapture}
+                    disabled={isCapturing}
+                    className="text-primary border-primary/60 w-full bg-white transition-all duration-200 hover:border-green-300 hover:bg-green-50"
+                  >
+                    <Camera className="mr-2 h-4 w-4" />
+                    {isCapturing ? (
+                      <>
+                        <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-green-600 border-t-transparent"></div>
+                        Capturing...
+                      </>
+                    ) : (
+                      "Open Camera"
+                    )}
+                  </Button>
+                </div>
+              )}
+
+              {isNative && (
+                <div className="flex items-center gap-3">
+                  <hr className="flex-1 border-gray-200" />
+                  <span className="text-sm font-medium text-gray-500">or</span>
+                  <hr className="flex-1 border-gray-200" />
+                </div>
+              )}
+
               {/* Upload/Drag Zone */}
               <div
                 {...getRootProps()}
@@ -196,43 +227,12 @@ function ImageInput({
                 </div>
                 <input {...getInputProps()} className="hidden" />
               </div>
-
-              {/* Camera Option for Mobile */}
-              {isNative && (
-                <div className="mt-6 space-y-3">
-                  <div className="flex items-center gap-3">
-                    <hr className="flex-1 border-gray-200" />
-                    <span className="text-sm font-medium text-gray-500">
-                      or
-                    </span>
-                    <hr className="flex-1 border-gray-200" />
-                  </div>
-
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={handleCameraCapture}
-                    disabled={isCapturing}
-                    className="text-primary border-primary w-full bg-white transition-all duration-200 hover:border-green-300 hover:bg-green-50"
-                  >
-                    <Camera className="mr-2 h-4 w-4" />
-                    {isCapturing ? (
-                      <>
-                        <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-green-600 border-t-transparent"></div>
-                        Capturing...
-                      </>
-                    ) : (
-                      "Take Photo"
-                    )}
-                  </Button>
-                </div>
-              )}
             </div>
           </CardContent>
         </Card>
       ) : (
         // Image Preview
-        <Card className="border-primary bg-primary/20 overflow-hidden border-2">
+        <Card className="border-primary/40 bg-primary/20 overflow-hidden border-2">
           <CardContent className="p-4">
             <div className="relative aspect-square max-h-[350px] w-full overflow-hidden rounded-xl bg-white shadow-inner">
               <NextImage
@@ -248,7 +248,7 @@ function ImageInput({
                 type="button"
                 variant="destructive"
                 size="sm"
-                className="absolute top-3 right-3 h-8 w-8 rounded-full bg-red-600/40 p-0 shadow-lg transition-transform duration-200 hover:scale-110"
+                className="absolute top-3 right-3 h-8 w-8 rounded-xl bg-black/50 p-0 shadow-lg transition-transform duration-200 hover:scale-110"
                 onClick={clearImage}
               >
                 <X className="h-4 w-4 text-white" />

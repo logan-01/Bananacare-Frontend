@@ -153,7 +153,7 @@ function formatReadableDate(date: Date | null): string {
 
 export async function getScanResult(): Promise<ScanResultType[]> {
   try {
-    const response = await fetch("http://localhost:5000/scan");
+    const response = await fetch(`${apiBaseUrl}/scan`);
     if (!response.ok) {
       throw new Error("Failed to fetch scans");
     }
@@ -165,6 +165,26 @@ export async function getScanResult(): Promise<ScanResultType[]> {
   } catch (error) {
     console.error("Error fetching scans:", error);
     return [];
+  }
+}
+
+export async function deleteScanResult(id: string): Promise<boolean> {
+  try {
+    const response = await fetch(`${apiBaseUrl}/scan/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to delete scan result: ${response.statusText}`);
+    }
+
+    const json = await response.json();
+
+    // API returns { success: true, message: "...", deletedId: "..." }
+    return json.success || false;
+  } catch (error) {
+    console.error("Error deleting scan result:", error);
+    return false;
   }
 }
 

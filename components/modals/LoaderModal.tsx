@@ -1,14 +1,13 @@
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertTriangle, RefreshCw, ScanLine } from "lucide-react";
+import { useEffect, useState } from "react";
 
-import Stepper from "../user/Stepper";
 import PlatformWrapper from "../wrapper/PlatformWrapper";
+import { isNative } from "@/lib/constant";
+import { div } from "@tensorflow/tfjs";
 
 interface LoaderModalProps {
   open: boolean;
@@ -44,29 +43,63 @@ const LoaderModal: React.FC<LoaderModalProps> = ({
     return "pending";
   };
 
+  const paddingClass = isNative ? "px-0" : "px-6";
+
+  useEffect(() => {
+    if (open && !isNative) {
+      const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+        const message =
+          "Analysis in progress! Are you sure you want to leave? Your scan will be lost.";
+        e.preventDefault();
+        e.returnValue = message;
+        return message;
+      };
+
+      window.addEventListener("beforeunload", handleBeforeUnload);
+
+      return () => {
+        window.removeEventListener("beforeunload", handleBeforeUnload);
+      };
+    }
+  }, [open, isNative]);
+
   return (
     <PlatformWrapper
       open={open}
       onOpenChange={onClose}
-      title="Scan Progress"
+      title=""
       showBackButton={false}
+      nativeTitleClass="text-center w-full"
+      showHeader={false}
     >
-      <div className="flex h-full flex-1 flex-col bg-gradient-to-br from-gray-50 to-white">
+      <div className="flex h-full flex-1 flex-col">
+        {/* Refresh Warning */}
+        {!isNative && (
+          <div className="px-4">
+            <Alert className="border-primary/20 bg-primary/20">
+              <ScanLine className="text-primary h-4 w-4" />
+              <AlertDescription className="text-primary font-medium">
+                Scan in progress — please keep this page open.
+              </AlertDescription>
+            </Alert>
+          </div>
+        )}
+
         {/* Header Section */}
-        <div className="border-b border-gray-200 bg-white/80 px-6 py-4 backdrop-blur-sm">
+        <div className={`border-b border-gray-200 py-4 ${paddingClass}`}>
           <div className="mb-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="relative">
-                <div className="h-3 w-3 animate-pulse rounded-full bg-green-500"></div>
-                <div className="absolute inset-0 h-3 w-3 animate-ping rounded-full bg-green-500 opacity-75"></div>
+                <div className="bg-primary h-3 w-3 animate-pulse rounded-full"></div>
+                <div className="bg-primary/40 absolute inset-0 h-3 w-3 animate-ping rounded-full opacity-75"></div>
               </div>
               <h2 className="text-xl font-bold text-gray-900">
-                Processing Analysis
+                Performing Scan…
               </h2>
             </div>
             <Badge
               variant="secondary"
-              className="border-blue-200 bg-blue-100 text-blue-800"
+              className="border-primary bg-primary/10 text-primary font-semibold"
             >
               Step {currentStep + 1} of {augmentationSteps.length}
             </Badge>
@@ -78,7 +111,7 @@ const LoaderModal: React.FC<LoaderModalProps> = ({
               <span className="text-sm font-medium text-gray-700">
                 {currentStepData?.subtitle || "Processing"}...
               </span>
-              <span className="text-sm font-bold text-blue-600">
+              <span className="text-primary text-sm font-bold">
                 {Math.round(progress)}%
               </span>
             </div>
@@ -87,48 +120,60 @@ const LoaderModal: React.FC<LoaderModalProps> = ({
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 space-y-6 p-6">
+        <div className={`flex-1 space-y-6 py-4 ${paddingClass}`}>
           {/* Image Analysis Section */}
-          <Card className="border-2 border-dashed border-blue-200 bg-gradient-to-br from-blue-50/50 to-indigo-50/30 shadow-inner">
+          <Card className="bg-primary/20 border-primary border-2 border-dashed">
             <CardContent className="p-6">
-              <div className="relative mx-auto aspect-square max-h-[350px] w-full overflow-hidden rounded-xl bg-white shadow-lg">
-                {previewImg && (
+              <div className="relative mx-auto aspect-square max-h-[350px] w-full overflow-hidden rounded-xl">
+                {true && (
                   <>
                     {/* Image with processing overlay */}
                     <img
-                      src={previewImg}
-                      alt="Banana Analysis"
+                      src={previewImg || "/img/Banana-Bract-Mosaic-Virus.jpg"}
+                      alt="Sample Analysis"
                       className={`h-full w-full object-cover transition-all duration-700 ${
                         currentStepData?.animation || ""
                       } animate-steps`}
                     />
 
                     {/* Processing overlay */}
-                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/10">
+                    <div className="pointer-events-none absolute inset-0">
                       {/* Scanning line effect */}
                       <div className="absolute inset-0">
-                        <div className="animate-scan-line h-0.5 w-full bg-gradient-to-r from-transparent via-green-400 to-transparent opacity-80"></div>
+                        <div className="animate-scan-line bg-primary h-0.5 w-full shadow-lg"></div>
                       </div>
                     </div>
 
                     {/* Analysis indicators */}
                     <div className="absolute top-3 right-3 flex gap-2">
                       <div className="flex items-center gap-2 rounded-full bg-black/70 px-3 py-1 text-xs text-white backdrop-blur-sm">
-                        <div className="h-2 w-2 animate-pulse rounded-full bg-green-400"></div>
-                        Analyzing
+                        <div className="bg-primary h-2 w-2 animate-pulse rounded-full"></div>
+                        <p>Analyzing</p>
                       </div>
                     </div>
 
                     {/* Processing grid overlay */}
-                    {currentStep > 1 && (
-                      <div className="pointer-events-none absolute inset-0">
-                        <div className="h-full w-full rounded-xl border-2 border-green-400/30">
-                          <div className="absolute inset-4 rounded-lg border border-green-400/20">
-                            <div className="absolute inset-4 rounded-md border border-green-400/10"></div>
-                          </div>
+                    <div className="pointer-events-none absolute inset-0">
+                      <div className="border-primary/40 h-full w-full rounded-xl border-2">
+                        <div className="border-primary/30 absolute inset-4 rounded-lg border">
+                          <div className="border-primary/20 absolute inset-4 rounded-md border"></div>
                         </div>
                       </div>
-                    )}
+                    </div>
+
+                    {/* Corner indicators */}
+                    <div className="absolute top-2 left-2">
+                      <div className="border-primary h-6 w-6 border-t-2 border-l-2"></div>
+                    </div>
+                    <div className="absolute top-2 right-2">
+                      <div className="border-primary h-6 w-6 border-t-2 border-r-2"></div>
+                    </div>
+                    <div className="absolute bottom-2 left-2">
+                      <div className="border-primary h-6 w-6 border-b-2 border-l-2"></div>
+                    </div>
+                    <div className="absolute right-2 bottom-2">
+                      <div className="border-primary h-6 w-6 border-r-2 border-b-2"></div>
+                    </div>
                   </>
                 )}
               </div>
@@ -137,9 +182,9 @@ const LoaderModal: React.FC<LoaderModalProps> = ({
 
           {/* Process Steps */}
           <div className="space-y-4">
-            <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-900">
-              <div className="h-4 w-4 rounded-full bg-gradient-to-r from-blue-500 to-purple-500"></div>
-              Analysis Steps
+            <h3 className="text-dark flex items-center gap-2 text-lg font-semibold">
+              <div className="bg-primary h-4 w-4 rounded-full"></div>
+              Disease Detection Steps
             </h3>
 
             <div className="grid gap-3">
@@ -150,19 +195,19 @@ const LoaderModal: React.FC<LoaderModalProps> = ({
                     key={index}
                     className={`flex items-center gap-4 rounded-lg border p-3 transition-all duration-300 ${
                       status === "completed"
-                        ? "border-green-200 bg-green-50 shadow-sm"
+                        ? "border-primary/40 bg-primary/10"
                         : status === "active"
-                          ? "scale-105 border-blue-300 bg-blue-50 shadow-md"
-                          : "border-gray-200 bg-gray-50"
+                          ? "border-primary/50 bg-primary/20 ring-primary/20 scale-105"
+                          : "border-gray-300 bg-gray-50"
                     }`}
                   >
                     {/* Step indicator */}
                     <div
                       className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold transition-all duration-300 ${
                         status === "completed"
-                          ? "bg-green-500 text-white shadow-lg"
+                          ? "bg-primary text-white shadow-lg"
                           : status === "active"
-                            ? "animate-pulse bg-blue-500 text-white shadow-lg"
+                            ? "bg-primary ring-primary/30 animate-pulse text-white shadow-lg ring-2"
                             : "bg-gray-300 text-gray-600"
                       }`}
                     >
@@ -174,9 +219,9 @@ const LoaderModal: React.FC<LoaderModalProps> = ({
                       <p
                         className={`font-medium transition-colors duration-300 ${
                           status === "active"
-                            ? "text-blue-800"
+                            ? "text-primary"
                             : status === "completed"
-                              ? "text-green-800"
+                              ? "text-primary"
                               : "text-gray-600"
                         }`}
                       >
@@ -185,9 +230,9 @@ const LoaderModal: React.FC<LoaderModalProps> = ({
                       <p
                         className={`text-sm transition-colors duration-300 ${
                           status === "active"
-                            ? "text-blue-600"
+                            ? "text-dark"
                             : status === "completed"
-                              ? "text-green-600"
+                              ? "text-dark"
                               : "text-gray-500"
                         }`}
                       >
@@ -198,7 +243,7 @@ const LoaderModal: React.FC<LoaderModalProps> = ({
                     {/* Status indicator */}
                     {status === "active" && (
                       <div className="flex-shrink-0">
-                        <div className="h-6 w-6 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"></div>
+                        <div className="text-primary border-primary/30 border-t-primary h-6 w-6 animate-spin rounded-full border-2"></div>
                       </div>
                     )}
                   </div>
@@ -207,45 +252,7 @@ const LoaderModal: React.FC<LoaderModalProps> = ({
             </div>
           </div>
         </div>
-
-        {/* Footer Section */}
-        <div className="border-t border-gray-200 bg-white/80 px-6 py-4 backdrop-blur-sm">
-          <div className="space-y-2 text-center">
-            <div className="mt-3 flex items-center justify-center gap-4 text-xs text-gray-500">
-              <span className="flex items-center gap-1">
-                <div className="h-2 w-2 rounded-full bg-green-400"></div>
-                AI Processing
-              </span>
-              <span className="flex items-center gap-1">
-                <div className="h-2 w-2 rounded-full bg-blue-400"></div>
-                TensorFlow Model
-              </span>
-              <span className="flex items-center gap-1">
-                <div className="h-2 w-2 rounded-full bg-purple-400"></div>
-                Real-time Analysis
-              </span>
-            </div>
-          </div>
-        </div>
       </div>
-
-      {/* Custom styles for animations */}
-      <style jsx>{`
-        @keyframes scan-line {
-          0% {
-            transform: translateY(-100%);
-          }
-          100% {
-            transform: translateY(400px);
-          }
-        }
-        .animate-scan-line {
-          animation: scan-line 2s linear infinite;
-        }
-        .animate-steps {
-          filter: brightness(1.1) contrast(1.05);
-        }
-      `}</style>
     </PlatformWrapper>
   );
 };

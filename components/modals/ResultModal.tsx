@@ -192,7 +192,7 @@ const ResultModal: React.FC<ResultModalProps> = ({
             {filteredResults.map((result, index) => (
               <div
                 key={index}
-                className="group rounded-lg border border-gray-200 bg-white p-4 transition-all duration-200 hover:border-gray-300 hover:shadow-sm"
+                className="group border-primary/80 h rounded-lg border bg-white p-4 transition-all duration-200 hover:shadow-sm"
               >
                 <div className="flex items-center gap-4">
                   {/* Rank indicator */}
@@ -244,12 +244,12 @@ const ResultModal: React.FC<ResultModalProps> = ({
               <Separator className="flex-1" />
             </div>
 
-            <div className="rounded-xl bg-gradient-to-br shadow-sm">
+            <div className="rounded-xl">
               <div className="space-y-4">
                 {topResult.recommendations.map((recommendation, index) => (
                   <div
                     key={index}
-                    className="border-primary/10 flex items-start gap-4 rounded-lg border bg-white p-4 shadow-sm transition hover:shadow-md"
+                    className="border-primary/80 flex items-start gap-4 rounded-lg border bg-white p-4 transition hover:shadow-md"
                   >
                     {/* Number / Step circle */}
                     <div className="bg-primary flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-white shadow">

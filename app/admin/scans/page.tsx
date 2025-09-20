@@ -4,6 +4,7 @@ import React from "react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import ScanTable from "@/components/admin/ScanTable";
 import useScanResult from "@/hooks/useScanResult";
+import { deleteScanResult } from "@/lib/helper";
 
 function page() {
   const scanResult = useScanResult();
@@ -21,7 +22,7 @@ function page() {
 
       {/* Body */}
       <div className="mb-10 flex flex-col gap-4">
-        <ScanTable data={scanResult} />
+        <ScanTable data={scanResult} onDelete={deleteScanResult} />
       </div>
     </div>
   );
