@@ -82,7 +82,7 @@ function Page() {
         {filteredBananaDisease.map((disease, index) => (
           <div
             key={index}
-            className="bg-primary/80 hover:shadow-2x h-full rounded-md p-4 hover:-translate-y-2"
+            className="bg-primary hover:shadow-2x h-full rounded-md p-4 hover:-translate-y-2"
           >
             <div className="group flex h-full transform flex-col overflow-hidden rounded-md bg-white shadow-lg transition-all duration-300">
               {/* Image Container */}

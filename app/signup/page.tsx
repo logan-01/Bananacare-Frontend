@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import SignupForm from "@/components/user/SignupForm";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import Loader from "@/components/wrapper/Loader";
 
 function SignupPage() {
   const { user, loading } = useAuth();
@@ -14,6 +15,10 @@ function SignupPage() {
       router.push("/admin");
     }
   }, [user, loading, router]);
+
+  if (loading) {
+    return <Loader />;
+  }
 
   if (loading) {
     return (

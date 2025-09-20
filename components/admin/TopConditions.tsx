@@ -1,12 +1,7 @@
+"use client";
+
 import React, { useState } from "react";
-import {
-  Activity,
-  AlertCircle,
-  CheckCircle,
-  Eye,
-  TrendingDown,
-  Trophy,
-} from "lucide-react";
+import { Activity, CheckCircle, Eye, TrendingDown, Trophy } from "lucide-react";
 
 import {
   Card,

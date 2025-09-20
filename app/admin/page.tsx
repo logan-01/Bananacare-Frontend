@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
 import {
@@ -51,10 +51,10 @@ function page() {
       value: totalScans,
       subtitle: `${latestScanDate}`,
       subtitleIcon: Calendar,
-      borderColor: "border-l-blue-500",
-      iconBgColor: "bg-blue-100",
-      iconColor: "text-blue-600",
-      subtitleColor: "text-blue-600",
+      borderColor: "border-l-neutral",
+      iconBgColor: "bg-neutral/20",
+      iconColor: "text-neutral",
+      subtitleColor: "text-neutral",
     },
     {
       icon: Check,
@@ -62,10 +62,10 @@ function page() {
       value: totalHealthy,
       subtitle: `${totalHealthyPercentage}% of total scans`,
       subtitleIcon: ShieldPlus,
-      borderColor: "border-l-green-500",
-      iconBgColor: "bg-green-100",
-      iconColor: "text-green-600",
-      subtitleColor: "text-green-600",
+      borderColor: "border-l-primary",
+      iconBgColor: "bg-primary/20",
+      iconColor: "text-primary",
+      subtitleColor: "text-primary",
     },
     {
       icon: AlertTriangle,
@@ -73,10 +73,10 @@ function page() {
       value: totalDiseased,
       subtitle: "Requires attention",
       subtitleIcon: ShieldAlert,
-      borderColor: "border-l-red-500",
-      iconBgColor: "bg-red-100",
-      iconColor: "text-red-600",
-      subtitleColor: "text-red-600",
+      borderColor: "border-l-danger",
+      iconBgColor: "bg-danger/20",
+      iconColor: "text-danger",
+      subtitleColor: "text-danger",
     },
     {
       icon: MapPin,
@@ -84,10 +84,10 @@ function page() {
       value: totalLocations,
       subtitle: "Monitoring sites",
       subtitleIcon: Eye,
-      borderColor: "border-l-orange-500",
-      iconBgColor: "bg-orange-100",
-      iconColor: "text-orange-600",
-      subtitleColor: "text-orange-600",
+      borderColor: "border-l-normal",
+      iconBgColor: "bg-normal/20",
+      iconColor: "text-normal",
+      subtitleColor: "text-normal",
     },
   ];
 

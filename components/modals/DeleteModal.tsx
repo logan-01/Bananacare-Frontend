@@ -11,9 +11,17 @@ interface DeleteModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  deleteTitle?: string;
+  deleteDescription?: string;
 }
 
-const DeleteModal = ({ isOpen, onClose, onConfirm }: DeleteModalProps) => {
+const DeleteModal = ({
+  isOpen,
+  onClose,
+  onConfirm,
+  deleteTitle = "Delete Scan Result?",
+  deleteDescription = "This action cannot be undone. The scan result and all related data  will be permanently removed.",
+}: DeleteModalProps) => {
   const [isDeleting, setIsDeleting] = useState(false);
 
   return (
@@ -33,17 +41,14 @@ const DeleteModal = ({ isOpen, onClose, onConfirm }: DeleteModalProps) => {
           </div>
           <div className="text-danger flex-1">
             <h2 className="text-foreground text-lg font-semibold">
-              Delete Scan Result?
+              {deleteTitle}
             </h2>
           </div>
         </div>
 
         {/* Description */}
         <div className="mb-4">
-          <p className="text-muted-foreground text-sm">
-            This action cannot be undone. The scan result and all related data
-            will be permanently removed.
-          </p>
+          <p className="text-muted-foreground text-sm">{deleteDescription}</p>
         </div>
 
         {/* Actions */}

@@ -67,7 +67,7 @@ const PlatformWrapper: React.FC<PlatformWrapperProps> = ({
           className={`flex max-h-[96vh] flex-col overflow-hidden border-none ${sizeClasses[size]} md:px-10 ${className}`}
         >
           <AlertDialogTitle
-            className={`sticky top-0 flex items-center bg-white ${!showHeader ? "sr-only" : ""}`}
+            className={`sticky top-0 flex items-center bg-white font-bold ${!showHeader ? "sr-only" : ""}`}
           >
             <p className="flex-1">{title}</p>
 

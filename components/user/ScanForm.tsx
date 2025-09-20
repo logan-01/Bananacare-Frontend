@@ -38,7 +38,7 @@ import ImageInput from "./ImageInput";
 import LocationInput from "./LocationInput";
 
 import { isNative } from "@/lib/constant";
-import { MapPin, CheckCircle2, WifiOff, Wifi, CloudUpload } from "lucide-react";
+import { WifiOff, Wifi, CloudUpload } from "lucide-react";
 
 // Schema
 const scanSchema = z.object({
@@ -122,8 +122,6 @@ function ScanForm() {
       file: [],
     },
   });
-
-  // Add this to your ScanForm component for better debugging
 
   const onSubmit = async (values: z.infer<typeof scanSchema>) => {
     console.log("🚀 === SCAN SUBMISSION STARTED ===");
@@ -281,6 +279,7 @@ function ScanForm() {
       setShowLoader(false);
     }
   };
+
   const resetForm = () => {
     setPreviewImg(null);
     form.reset();

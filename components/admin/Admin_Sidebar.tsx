@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MdKeyboardArrowDown } from "react-icons/md";
-import { House, ScanLine, ChartLine, Map } from "lucide-react";
+import { House, ScanLine, ChartLine, Map, Mail } from "lucide-react";
 import { authService } from "@/lib/authService";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -49,6 +49,11 @@ const items = [
     title: "Geographic",
     url: "/admin/geographic",
     icon: Map,
+  },
+  {
+    title: "Inquiries",
+    url: "/admin/inquiries",
+    icon: Mail,
   },
 ];
 

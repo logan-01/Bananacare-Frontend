@@ -73,7 +73,7 @@ function page() {
       {/* Main Cards Section */}
       <div className="grid max-w-7xl grid-cols-1 gap-8 rounded-md lg:grid-cols-3">
         {aboutCards.map((card, index) => (
-          <div key={index} className="bg-primary/80 rounded-md p-4">
+          <div key={index} className="bg-primary rounded-md p-4">
             <div className="group relative flex h-full flex-col overflow-hidden rounded-md border border-gray-100 bg-white shadow-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
               {/* Background Gradient */}
 

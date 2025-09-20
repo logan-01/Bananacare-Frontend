@@ -24,8 +24,7 @@ const apiBaseUrl = isNative
 
 // const apiBaseUrl = "/api";
 const osmBaseUrl = "https://nominatim.openstreetmap.org/reverse";
-const hfBaseUrl =
-  "https://api-inference.huggingface.co/models/google/vit-base-patch16-224";
+const hfBaseUrl = "https://api-inference.huggingface.co/models";
 
 //* User Helper Functions
 export async function getReverseGeocode(latitude: number, longitude: number) {
@@ -105,7 +104,7 @@ export async function getIsBanana(file: File) {
     const base64Image = Buffer.from(arrayBuffer).toString("base64");
 
     // Call Hugging Face API
-    const response = await fetch(`${hfBaseUrl}`, {
+    const response = await fetch(`${hfBaseUrl}/google/vit-base-patch16-224`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${process.env.NEXT_PUBLIC_HF_ACCESS_TOKEN}`,
@@ -650,4 +649,198 @@ export function getGeographicsData(
   });
 
   return geoData;
+}
+
+export type PriorityLabel = "low" | "medium" | "high";
+export type StatusLabel = "read" | "unread" | "replied";
+
+export interface InquiryMessageType {
+  id?: string;
+  name: string;
+  email: string;
+  phone?: string;
+  message: string;
+  priority: PriorityLabel;
+  status?: StatusLabel;
+  replied?: boolean;
+  reply?: string;
+  repliedAt?: string; // ISO string
+  createdAt?: string; // ISO string
+}
+
+export const sendInquiry = async (payload: InquiryMessageType) => {
+  try {
+    const response = await fetch(`${apiBaseUrl}/inquiries`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return { success: false, error: data.error || "Failed to send message" };
+    }
+
+    return { success: true, data };
+  } catch (err) {
+    console.error("Error sending inquiry message:", err);
+    return { success: false, error: "Network error" };
+  }
+};
+
+export interface PriorityResult {
+  sequence: string;
+  labels: PriorityLabel[];
+  scores: number[];
+}
+
+export async function getPriorityType(inputText: string) {
+  const response = await fetch(`${hfBaseUrl}/facebook/bart-large-mnli`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.NEXT_PUBLIC_HF_ACCESS_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      inputs: inputText,
+      parameters: {
+        candidate_labels: ["low", "medium", "high"],
+      },
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Getting Priory Type Error - Status: ${response.status}`);
+  }
+
+  const result = await response.json();
+  return result;
+}
+
+export async function getInquiries() {
+  try {
+    const response = await fetch(`${apiBaseUrl}/inquiries`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch inquiries: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+
+    return result.data as InquiryMessageType[];
+  } catch (error) {
+    console.error("Error fetching inquiries:", error);
+    throw error;
+  }
+}
+
+export async function updateInquiry(
+  id: string,
+  data: {
+    status?: string;
+    replied?: boolean;
+    reply?: string;
+  },
+) {
+  if (!id || id === "defaultId" || id === "id_01") {
+    throw new Error("Invalid ID provided");
+  }
+
+  try {
+    console.log(`Making PATCH request to: ${apiBaseUrl}/inquiries/${id}`);
+    console.log("Request data:", data);
+
+    const res = await fetch(`${apiBaseUrl}/inquiries/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    console.log("Response status:", res.status);
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error("Error response:", errorText);
+
+      let errorMessage;
+      try {
+        const errorJson = JSON.parse(errorText);
+        errorMessage =
+          errorJson.error || errorJson.message || "Failed to update inquiry";
+      } catch {
+        errorMessage = `HTTP ${res.status}: ${res.statusText}`;
+      }
+
+      throw new Error(errorMessage);
+    }
+
+    const result = await res.json();
+    console.log("Update successful:", result);
+    return result;
+  } catch (err: any) {
+    console.error("updateInquiry error:", err);
+
+    if (err.name === "TypeError" && err.message.includes("fetch")) {
+      throw new Error("Network error: Unable to connect to server");
+    }
+
+    throw err;
+  }
+}
+
+export async function deleteInquiry(id: string) {
+  if (!id || id === "defaultId" || id === "id_01") {
+    throw new Error("Invalid ID provided");
+  }
+
+  try {
+    console.log(`Making DELETE request to: ${apiBaseUrl}/inquiries/${id}`);
+
+    const res = await fetch(`${apiBaseUrl}/inquiries/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    console.log("Delete response status:", res.status);
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error("Delete error response:", errorText);
+
+      let errorMessage;
+      try {
+        const errorJson = JSON.parse(errorText);
+        errorMessage =
+          errorJson.error || errorJson.message || "Failed to delete inquiry";
+      } catch {
+        errorMessage = `HTTP ${res.status}: ${res.statusText}`;
+      }
+
+      throw new Error(errorMessage);
+    }
+
+    const result = await res.json();
+    console.log("Delete successful:", result);
+    return result;
+  } catch (err: any) {
+    console.error("deleteInquiry error:", err);
+
+    if (err.name === "TypeError" && err.message.includes("fetch")) {
+      throw new Error("Network error: Unable to connect to server");
+    }
+
+    throw err;
+  }
 }

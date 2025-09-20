@@ -8,8 +8,12 @@ function useScanResult(pollingInterval = 5000) {
 
   useEffect(() => {
     async function loadData() {
-      const scans = await getScanResult();
-      setScanResult(scans);
+      try {
+        const scans = await getScanResult();
+        setScanResult(scans);
+      } catch (err) {
+        console.error("Failed to load scan results", err);
+      }
     }
 
     loadData(); // initial fetch
