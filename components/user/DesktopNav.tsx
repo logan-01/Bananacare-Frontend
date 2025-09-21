@@ -1,6 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import PlatformWrapper from "../wrapper/PlatformWrapper";
+import DownloadPage from "./DownloadPage";
+import { RiDownloadLine } from "react-icons/ri";
 
 function DesktopNav() {
   const sectionIds = ["home", "disease", "about", "contact"];
@@ -55,12 +58,20 @@ function DesktopNav() {
         </li>
       ))}
 
-      <button
-        className="bg-primary text-light rounded-md px-4 py-2 font-medium hover:cursor-pointer hover:opacity-70"
-        onClick={() => handleNavClick("scan")}
+      <PlatformWrapper
+        title="Download App"
+        trigger={
+          <button
+            className="bg-primary text-light flex items-center gap-2 rounded-md px-4 py-2 font-medium hover:cursor-pointer hover:opacity-70"
+            onClick={() => handleNavClick("scan")}
+          >
+            <RiDownloadLine className="h-5 w-5" />
+            <span>Download</span>
+          </button>
+        }
       >
-        Download
-      </button>
+        <DownloadPage />
+      </PlatformWrapper>
     </ul>
   );
 }

@@ -155,6 +155,7 @@ export function Admin_Sidebar() {
                       ? user.displayName.trim().split(" ")[0]
                       : "User"}
                   </p> */}
+                  <p className="text-dark text-base">Bananacare</p>
                 </div>
 
                 {/* Options */}

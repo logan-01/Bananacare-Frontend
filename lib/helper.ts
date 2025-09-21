@@ -844,3 +844,38 @@ export async function deleteInquiry(id: string) {
     throw err;
   }
 }
+
+//Inquiries Utility Functions
+export const getStatusColor = (status: string = "unread") => {
+  const colors = {
+    unread: "#f97a00",
+    read: "#154D71",
+    replied: "#22b123",
+  };
+  return colors[status as keyof typeof colors] || "#26333a";
+};
+
+export const getPriorityColor = (priority: string = "low") => {
+  const colors = {
+    high: "#f93827",
+    medium: "#feba17",
+    low: "#187498",
+  };
+  return colors[priority as keyof typeof colors] || "#187498";
+};
+
+export const formatDate = (isoDate: string = "") => {
+  const date = new Date(isoDate);
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  };
+  return new Intl.DateTimeFormat("en-US", options)
+    .format(date)
+    .replace(",", " -")
+    .toLowerCase();
+};
