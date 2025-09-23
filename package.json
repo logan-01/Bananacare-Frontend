@@ -5,12 +5,11 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
-    "export": "next export",
     "start": "next start",
     "lint": "next lint",
     "static": "next build && next export",
     "preview": "npx serve out",
-    "cap:build": "npm run build && npx cap sync",
+    "cap:build": "CAPACITOR_BUILD=true next build && npx cap sync",
     "cap:android": "npx cap sync && npx cap open android"
   },
   "dependencies": {

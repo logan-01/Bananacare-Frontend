@@ -1,9 +1,11 @@
 import type { NextConfig } from "next";
 
+const isCapacitorBuild = process.env.CAPACITOR_BUILD === "true";
+
 const nextConfig: NextConfig = {
-  output: "export",
+  output: isCapacitorBuild ? "export" : undefined,
   images: {
-    unoptimized: true, // 👈 important for static export
+    unoptimized: isCapacitorBuild,
     dangerouslyAllowSVG: true,
     contentDispositionType: "attachment",
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
@@ -11,6 +13,10 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  ...(isCapacitorBuild && {
+    trailingSlash: true,
+    assetPrefix: "./",
+  }),
 };
 
 export default nextConfig;
