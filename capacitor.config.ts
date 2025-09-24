@@ -4,16 +4,11 @@ const config: CapacitorConfig = {
   appId: "com.bananacare.app",
   appName: "bananacare",
   webDir: "out",
+  //!Remove Server in Production
   // server: {
-  //   url: "http://192.168.1.205:3000",
+  //   url: "http://192.168.1.207:3000",
   //   cleartext: true,
   // },
-  android: {
-    path: "../mobile/android",
-  },
-  ios: {
-    path: "../mobile/ios",
-  },
   plugins: {
     StatusBar: {
       style: "dark",
@@ -22,6 +17,13 @@ const config: CapacitorConfig = {
     },
     CapacitorHttp: {
       enabled: true,
+    },
+    SplashScreen: {
+      launchShowDuration: 3000,
+      backgroundColor: "#fbfefa",
+      androidScaleType: "CENTER_CROP",
+      showSpinner: false,
+      splashFullScreen: true,
     },
   },
 };

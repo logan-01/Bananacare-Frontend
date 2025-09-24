@@ -9,8 +9,8 @@ import { PiParallelogramThin, PiFlipHorizontalLight } from "react-icons/pi";
 import { IconType } from "react-icons/lib";
 import { Capacitor } from "@capacitor/core";
 
-// export const isNative = Capacitor.isNativePlatform();
-export const isNative = false;
+export const isNative = Capacitor.isNativePlatform();
+// export const isNative = false;
 
 export interface BananaDiseaseType {
   id: string;

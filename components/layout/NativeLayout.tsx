@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
-import { useSwipeable } from "react-swipeable";
 import BottomNav from "@/components/user/BottomNav";
 import CapacitorStatusBar from "../user/CapacitorStatusBar";
 
@@ -21,6 +20,11 @@ function NativeLayout({ home, disease, contact, about }: NativeLayoutProps) {
   const searchParams = useSearchParams();
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Touch tracking refs
+  const touchStartX = useRef<number>(0);
+  const touchStartY = useRef<number>(0);
+  const isDragging = useRef<boolean>(false);
+
   const [activeTab, setActiveTab] = useState<TabType>(() => {
     const tab = searchParams.get("tab") as TabType;
     return tab && tabs.includes(tab) ? tab : "home";
@@ -28,9 +32,6 @@ function NativeLayout({ home, disease, contact, about }: NativeLayoutProps) {
 
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [swipeProgress, setSwipeProgress] = useState(0);
-  const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | null>(
-    null,
-  );
 
   const components = {
     home,
@@ -40,15 +41,11 @@ function NativeLayout({ home, disease, contact, about }: NativeLayoutProps) {
     scan: <div>Scan page coming soon...</div>,
   };
 
-  const handleTabChange = async (newTab: TabType) => {
+  const handleTabChange = (newTab: TabType) => {
     if (newTab === activeTab || isTransitioning) return;
 
     setIsTransitioning(true);
     setSwipeProgress(0);
-    setSwipeDirection(null);
-
-    // Smooth transition delay
-    await new Promise((resolve) => setTimeout(resolve, 50));
 
     setActiveTab(newTab);
 
@@ -66,96 +63,100 @@ function NativeLayout({ home, disease, contact, about }: NativeLayoutProps) {
     window.history.replaceState({}, "", newUrl);
 
     // Reset transition state
-    setTimeout(() => setIsTransitioning(false), 350);
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 300);
   };
 
-  // Enhanced swipe handlers with progress tracking
-  const swipeHandlers = useSwipeable({
-    onSwiping: (eventData) => {
-      const { deltaX, dir } = eventData;
+  // Native touch event handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (isTransitioning) return;
+
+    const touch = e.touches[0];
+    touchStartX.current = touch.clientX;
+    touchStartY.current = touch.clientY;
+    isDragging.current = false;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (isTransitioning) return;
+
+    const touch = e.touches[0];
+    const deltaX = touch.clientX - touchStartX.current;
+    const deltaY = touch.clientY - touchStartY.current;
+
+    // Determine if this is a horizontal swipe
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 10) {
+      isDragging.current = true;
+      e.preventDefault(); // Prevent scrolling
+
       const containerWidth = containerRef.current?.clientWidth || 375;
-      const progress = Math.abs(deltaX) / containerWidth;
+      const progress = Math.min(Math.abs(deltaX) / containerWidth, 0.3);
+      setSwipeProgress(progress);
+    }
+  };
 
-      setSwipeProgress(Math.min(progress, 0.3)); // Max 30% visual feedback
-      setSwipeDirection(
-        dir === "Left" ? "left" : dir === "Right" ? "right" : null,
-      );
-    },
-    onSwipedLeft: () => {
-      const currentIndex = tabs.indexOf(activeTab);
-      if (currentIndex < tabs.length - 1) {
-        handleTabChange(tabs[currentIndex + 1]);
-      } else {
-        // Reset if at end
-        setSwipeProgress(0);
-        setSwipeDirection(null);
-      }
-    },
-    onSwipedRight: () => {
-      const currentIndex = tabs.indexOf(activeTab);
-      if (currentIndex > 0) {
-        handleTabChange(tabs[currentIndex - 1]);
-      } else {
-        // Reset if at beginning
-        setSwipeProgress(0);
-        setSwipeDirection(null);
-      }
-    },
-    onTouchEndOrOnMouseUp: () => {
-      // Reset swipe progress when touch ends
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (isTransitioning || !isDragging.current) {
       setSwipeProgress(0);
-      setSwipeDirection(null);
-    },
-    preventScrollOnSwipe: true,
-    trackMouse: true,
-    trackTouch: true,
-    delta: 10,
-    swipeDuration: 500,
-    touchEventOptions: { passive: false },
-  });
+      return;
+    }
 
-  // Get current tab index for navigation indicators
+    const touch = e.changedTouches[0];
+    const deltaX = touch.clientX - touchStartX.current;
+    const threshold = 50; // Minimum swipe distance
+
+    const currentIndex = tabs.indexOf(activeTab);
+
+    if (deltaX > threshold && currentIndex > 0) {
+      // Swipe right - go to previous tab
+      handleTabChange(tabs[currentIndex - 1]);
+    } else if (deltaX < -threshold && currentIndex < tabs.length - 1) {
+      // Swipe left - go to next tab
+      handleTabChange(tabs[currentIndex + 1]);
+    } else {
+      // Reset if swipe wasn't far enough
+      setSwipeProgress(0);
+    }
+
+    isDragging.current = false;
+  };
+
   const currentTabIndex = tabs.indexOf(activeTab);
 
   return (
     <div className="flex h-screen flex-col bg-gray-50">
-      {/* Status Bar for Safe Area  */}
       <CapacitorStatusBar />
 
-      {/* Content area with enhanced transitions */}
       <div
-        {...swipeHandlers}
         ref={containerRef}
         className="relative flex flex-1 overflow-hidden"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        style={{
+          touchAction: "pan-y",
+        }}
       >
         {tabs.map((tab, index) => {
           const isActive = activeTab === tab;
-          const isPrev = index === currentTabIndex - 1;
-          const isNext = index === currentTabIndex + 1;
 
-          // Calculate transform based on swipe progress
           let transform = "translateX(100%)";
           let opacity = 0;
-          let scale = 0.95;
 
           if (isActive) {
-            const swipeOffset =
-              swipeDirection === "left"
-                ? -swipeProgress * 100
-                : swipeDirection === "right"
-                  ? swipeProgress * 100
-                  : 0;
-            transform = `translateX(${swipeOffset}%)`;
+            // Show swipe feedback only during drag
+            if (isDragging.current && swipeProgress > 0) {
+              const direction =
+                touchStartX.current >
+                (containerRef.current?.clientWidth || 0) / 2
+                  ? 1
+                  : -1;
+              transform = `translateX(${direction * swipeProgress * -30}%)`;
+            } else {
+              transform = "translateX(0%)";
+            }
             opacity = 1;
-            scale = 1 - swipeProgress * 0.05;
-          } else if (isPrev && swipeDirection === "right") {
-            transform = `translateX(${-100 + swipeProgress * 100}%)`;
-            opacity = swipeProgress;
-            scale = 0.95 + swipeProgress * 0.05;
-          } else if (isNext && swipeDirection === "left") {
-            transform = `translateX(${100 - swipeProgress * 100}%)`;
-            opacity = swipeProgress;
-            scale = 0.95 + swipeProgress * 0.05;
           } else if (index < currentTabIndex) {
             transform = "translateX(-100%)";
           }
@@ -167,8 +168,8 @@ function NativeLayout({ home, disease, contact, about }: NativeLayoutProps) {
                 isActive ? "z-10" : "z-0"
               }`}
               style={{
-                transform: `${transform} scale(${scale})`,
-                opacity: opacity,
+                transform,
+                opacity,
                 pointerEvents: isActive ? "auto" : "none",
               }}
             >
@@ -179,11 +180,9 @@ function NativeLayout({ home, disease, contact, about }: NativeLayoutProps) {
           );
         })}
 
-        {/* Loading overlay */}
+        {/* Transition overlay */}
         {isTransitioning && (
-          <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-            <div className="flex flex-col items-center gap-2"></div>
-          </div>
+          <div className="pointer-events-none absolute inset-0 z-20 bg-transparent" />
         )}
       </div>
 

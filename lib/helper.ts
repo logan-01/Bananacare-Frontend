@@ -1,6 +1,5 @@
 import {
   bananaDiseases,
-  BananaDiseaseType,
   isNative,
   ScanResultType,
   severityColors,
@@ -16,15 +15,17 @@ interface ScanPayload {
 }
 
 //* API Endpoints
-// const apiBaseUrl = process.env.NEXT_PUBLIC_BACKEND_API;
-
-const apiBaseUrl = isNative
-  ? "http://192.168.1.205:5000"
-  : "http://localhost:5000";
-
-// const apiBaseUrl = "/api";
-const osmBaseUrl = "https://nominatim.openstreetmap.org/reverse";
-const hfBaseUrl = "https://api-inference.huggingface.co/models";
+//Backend Endpoints
+const developmentUrl = isNative
+  ? process.env.NEXT_PUBLIC_BACKEND_API_DEVELOPMENT_MOBILE
+  : process.env.NEXT_PUBLIC_BACKEND_API_DEVELOPMENT;
+const productionUrl = process.env.NEXT_PUBLIC_BACKEND_API_PRODUCTION;
+const apiBaseUrl = productionUrl || developmentUrl;
+//Openstreetmap
+const osmBaseUrl = process.env.NEXT_PUBLIC_OSM_API;
+//Huggingface
+const hfBaseUrl = process.env.NEXT_PUBLIC_HF_API;
+const hfAccesToken = process.env.NEXT_PUBLIC_HF_ACCESS_TOKEN;
 
 //* User Helper Functions
 export async function getReverseGeocode(latitude: number, longitude: number) {
@@ -107,7 +108,7 @@ export async function getIsBanana(file: File) {
     const response = await fetch(`${hfBaseUrl}/google/vit-base-patch16-224`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_HF_ACCESS_TOKEN}`,
+        Authorization: `Bearer ${hfAccesToken}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
@@ -701,7 +702,7 @@ export async function getPriorityType(inputText: string) {
   const response = await fetch(`${hfBaseUrl}/facebook/bart-large-mnli`, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${process.env.NEXT_PUBLIC_HF_ACCESS_TOKEN}`,
+      Authorization: `Bearer ${hfAccesToken}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({

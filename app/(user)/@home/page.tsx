@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {
   RiCameraLine,
@@ -14,8 +16,10 @@ import ScanForm from "@/components/user/ScanForm";
 import Guide from "@/components/user/Guide";
 import { isNative } from "@/lib/constant";
 import AdminButton from "@/components/admin/AdminButton";
+import { Bell, FolderSync } from "lucide-react";
+import SyncDashboard from "@/components/user/SyncDashboard";
 
-async function page() {
+function page() {
   const features = [
     {
       icon: RiSparklingLine,
@@ -39,6 +43,20 @@ async function page() {
       className={`bg-image relative flex min-h-[80vh] flex-1 scroll-mt-20 flex-col px-4 ${isNative ? "pb-10" : ""}`}
       id="home"
     >
+      {isNative && (
+        <PlatformWrapper
+          title="Sync Manager"
+          trigger={
+            <div className="bg-primary absolute top-6 right-3 z-[99] flex h-10 w-10 items-center justify-center rounded-full">
+              {" "}
+              <FolderSync className="text-light h-6 w-6" />
+            </div>
+          }
+        >
+          <SyncDashboard />
+        </PlatformWrapper>
+      )}
+
       {/* Main */}
       <div className="relative mt-0 flex h-[90vh] flex-col items-center justify-center gap-4 md:mt-0 md:pb-0">
         {/* Main Heading */}

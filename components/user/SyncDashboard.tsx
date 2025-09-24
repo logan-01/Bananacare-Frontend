@@ -1,524 +1,428 @@
-// components/SyncDashboard.tsx
 "use client";
 
-import { useState, useEffect } from "react";
-
-import useOfflineStorage, {
-  OfflineScanResult,
-} from "@/hooks/useOfflineStorage";
-
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Separator } from "@/components/ui/separator";
+import React, { useState, useEffect } from "react";
 import {
-  CloudUpload,
+  RefreshCw,
   Wifi,
   WifiOff,
+  CheckCircle,
+  AlertCircle,
   Clock,
-  CheckCircle2,
-  XCircle,
+  Upload,
+  ChevronDown,
+  ChevronUp,
   Trash2,
-  RefreshCw,
-  Activity,
-  Database,
-  AlertTriangle,
-  ChevronRight,
   MapPin,
-  Calendar,
-  Zap,
-  TrendingUp,
 } from "lucide-react";
+import useOfflineStorage from "@/hooks/useOfflineStorage";
+import { OfflineScanResult, SyncStatus } from "@/hooks/useOfflineStorage";
+// // Mock types to match your real hook
+// interface OfflineScanResult {
+//   id: string;
+//   timestamp: number;
+//   imageData: string;
+//   percentage: number;
+//   resultArr: any[];
+//   result: string;
+//   locationData: {
+//     latitude: number;
+//     longitude: number;
+//   };
+//   synced: boolean;
+//   retryCount: number;
+//   lastSyncAttempt?: number;
+// }
 
-function SyncDashboard() {
-  const [offlineScans, setOfflineScans] = useState<OfflineScanResult[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedScan, setSelectedScan] = useState<string | null>(null);
+// interface SyncStatus {
+//   isOnline: boolean;
+//   isSyncing: boolean;
+//   pendingCount: number;
+//   lastSyncAttempt?: number;
+//   syncErrors: string[];
+// }
 
+// Mock hook for development
+const mockUseOfflineStorage = () => {
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>({
+    isOnline: true,
+    isSyncing: false,
+    pendingCount: 3,
+    lastSyncAttempt: Date.now() - 120000,
+    syncErrors: [],
+  });
+
+  const [pendingScans] = useState<OfflineScanResult[]>([
+    {
+      id: "scan_1",
+      timestamp: Date.now() - 300000,
+      imageData:
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=",
+      percentage: 85,
+      resultArr: [],
+      result: "Plastic Bottle",
+      locationData: { latitude: 14.4713, longitude: 120.9794 },
+      synced: false,
+      retryCount: 1,
+    },
+    {
+      id: "scan_2",
+      timestamp: Date.now() - 600000,
+      imageData:
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=",
+      percentage: 92,
+      resultArr: [],
+      result: "Aluminum Can",
+      locationData: { latitude: 14.4713, longitude: 120.9794 },
+      synced: false,
+      retryCount: 0,
+    },
+    {
+      id: "scan_3",
+      timestamp: Date.now() - 900000,
+      imageData:
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=",
+      percentage: 78,
+      resultArr: [],
+      result: "Glass Container",
+      locationData: { latitude: 14.4713, longitude: 120.9794 },
+      synced: false,
+      retryCount: 2,
+    },
+  ]);
+
+  const syncAllPendingScans = async (): Promise<void> => {
+    setSyncStatus((prev) => ({ ...prev, isSyncing: true }));
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    setSyncStatus((prev) => ({
+      ...prev,
+      isSyncing: false,
+      pendingCount: Math.max(0, prev.pendingCount - 2),
+      lastSyncAttempt: Date.now(),
+    }));
+  };
+
+  const checkNetworkStatus = async (): Promise<void> => {
+    setSyncStatus((prev) => ({ ...prev, isOnline: !prev.isOnline }));
+  };
+
+  const getPendingScans = async (): Promise<OfflineScanResult[]> => {
+    return pendingScans.filter((scan) => !scan.synced);
+  };
+
+  const clearSyncedScans = async (): Promise<void> => {
+    // Mock implementation
+    console.log("Clearing synced scans...");
+  };
+
+  return {
+    syncStatus,
+    syncAllPendingScans,
+    checkNetworkStatus,
+    getPendingScans,
+    clearSyncedScans,
+  };
+};
+
+const SynDashboard = () => {
   const {
     syncStatus,
     syncAllPendingScans,
-    getOfflineScans,
-    clearSyncedScans,
     checkNetworkStatus,
+    getPendingScans,
+    clearSyncedScans,
   } = useOfflineStorage();
 
-  // Load offline scans
-  const loadOfflineScans = async () => {
-    setLoading(true);
-    try {
-      const scans = await getOfflineScans();
-      setOfflineScans(scans);
-    } catch (error) {
-      console.error("Error loading offline scans:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [showDetails, setShowDetails] = useState(true);
+  const [pendingScans, setPendingScans] = useState<OfflineScanResult[]>([]);
 
   useEffect(() => {
-    loadOfflineScans();
-  }, [syncStatus.pendingCount, syncStatus.isSyncing]);
+    const loadPendingScans = async () => {
+      const scans = await getPendingScans();
+      setPendingScans(scans);
+    };
+    loadPendingScans();
+  }, [syncStatus.pendingCount]);
 
-  const handleSync = async () => {
-    await syncAllPendingScans();
-    await loadOfflineScans();
+  const formatTimestamp = (timestamp: number): string => {
+    return new Date(timestamp).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
-  const handleClearSynced = async () => {
-    await clearSyncedScans();
-    await loadOfflineScans();
+  const getTimeAgo = (timestamp: number): string => {
+    const now = Date.now();
+    const diff = now - timestamp;
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (days > 0) return `${days}d ago`;
+    if (hours > 0) return `${hours}h ago`;
+    if (minutes > 0) return `${minutes}m ago`;
+    return "Just now";
   };
 
-  const handleRefreshNetwork = async () => {
-    await checkNetworkStatus();
+  const getStatusColor = (): string => {
+    if (!syncStatus.isOnline) return "text-danger";
+    if (syncStatus.isSyncing) return "text-secondary";
+    if (syncStatus.pendingCount === 0) return "text-primary";
+    return "text-orange-500";
   };
 
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        {[...Array(3)].map((_, i) => (
-          <Card key={i} className="animate-pulse">
-            <CardContent className="pt-6">
-              <div className="space-y-4">
-                <div className="h-4 w-3/4 rounded bg-gray-200"></div>
-                <div className="h-8 rounded bg-gray-200"></div>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="h-16 rounded bg-gray-200"></div>
-                  <div className="h-16 rounded bg-gray-200"></div>
-                  <div className="h-16 rounded bg-gray-200"></div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
-  }
+  const getStatusIcon = (): React.ReactElement => {
+    if (!syncStatus.isOnline) return <WifiOff className="h-5 w-5" />;
+    if (syncStatus.isSyncing)
+      return <RefreshCw className="h-5 w-5 animate-spin" />;
+    if (syncStatus.pendingCount === 0)
+      return <CheckCircle className="h-5 w-5" />;
+    return <Clock className="text-primary h-5 w-5" />;
+  };
 
-  const syncedScans = offlineScans.filter((scan) => scan.synced);
-  const pendingScans = offlineScans.filter((scan) => !scan.synced);
-  const failedScans = offlineScans.filter((scan) => scan.retryCount >= 3);
-  const syncProgress =
-    offlineScans.length > 0
-      ? (syncedScans.length / offlineScans.length) * 100
-      : 0;
+  const getStatusText = (): string => {
+    if (!syncStatus.isOnline) return "Offline";
+    if (syncStatus.isSyncing) return "Syncing...";
+    if (syncStatus.pendingCount === 0) return "All synced";
+    return `${syncStatus.pendingCount} pending`;
+  };
 
   return (
-    <div className="min-h-screen space-y-6 bg-gradient-to-br from-slate-50 to-slate-100 p-4">
-      {/* Header Section */}
-      <div className="py-8 text-center">
-        <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg">
-          <Database className="h-8 w-8 text-white" />
-        </div>
-        <h1 className="mb-2 text-3xl font-bold text-gray-900">
-          Sync Dashboard
-        </h1>
-        <p className="mx-auto max-w-2xl text-gray-600">
-          Monitor your offline scans and synchronization status. Keep your data
-          in sync across all devices.
-        </p>
-      </div>
-
-      {/* Network Status Hero Card */}
-      <Card className="relative overflow-hidden border-0 bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-xl">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/90 to-purple-600/90"></div>
-        <div className="absolute top-0 right-0 -mt-16 -mr-16 h-32 w-32 rounded-full bg-white/10"></div>
-        <div className="absolute bottom-0 left-0 -mb-12 -ml-12 h-24 w-24 rounded-full bg-white/5"></div>
-
-        <CardContent className="relative z-10 pt-6">
-          <div className="mb-6 flex items-center justify-between">
+    <div className="min-h-screen bg-white">
+      {/* Main Status Card */}
+      <div className="">
+        <div className="mb-4 rounded-lg border border-gray-300 p-4 shadow-sm">
+          <div className="mb-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              {syncStatus.isOnline ? (
-                <div className="rounded-lg bg-green-500/20 p-2">
-                  <Wifi className="h-6 w-6 text-green-100" />
-                </div>
-              ) : (
-                <div className="rounded-lg bg-orange-500/20 p-2">
-                  <WifiOff className="h-6 w-6 text-orange-100" />
-                </div>
-              )}
+              <div className={`${getStatusColor()}`}>{getStatusIcon()}</div>
               <div>
-                <h3 className="text-lg font-semibold">Network Status</h3>
-                <p className="text-sm text-blue-100">
-                  {syncStatus.isOnline
-                    ? "Connected and ready to sync"
-                    : "Offline mode active"}
-                </p>
+                <div className="font-medium text-gray-900">
+                  {getStatusText()}
+                </div>
+                {syncStatus.lastSyncAttempt && (
+                  <div className="text-sm text-gray-500">
+                    Last sync: {getTimeAgo(syncStatus.lastSyncAttempt)}
+                  </div>
+                )}
               </div>
             </div>
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleRefreshNetwork}
-              className="border-white/20 bg-white/10 text-white hover:bg-white/20"
+            <button
+              onClick={checkNetworkStatus}
+              className="p-2 text-gray-400 transition-colors hover:text-gray-600"
             >
-              <RefreshCw className="mr-2 h-4 w-4" />
-              Refresh
-            </Button>
+              <RefreshCw className="h-4 w-4" />
+            </button>
           </div>
-
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold">{pendingScans.length}</div>
-              <div className="text-sm text-blue-100">Pending Sync</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold">{syncedScans.length}</div>
-              <div className="text-sm text-blue-100">Synced</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold">{failedScans.length}</div>
-              <div className="text-sm text-blue-100">Failed</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold">
-                {Math.round(syncProgress)}%
-              </div>
-              <div className="text-sm text-blue-100">Complete</div>
-            </div>
-          </div>
-
-          {syncStatus.lastSyncAttempt && (
-            <div className="mt-4 border-t border-white/20 pt-4">
-              <div className="flex items-center gap-2 text-sm text-blue-100">
-                <Clock className="h-4 w-4" />
-                Last sync attempt:{" "}
-                {new Date(syncStatus.lastSyncAttempt).toLocaleString()}
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Sync Controls */}
-      <Card className="border-0 shadow-lg">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Activity className="h-5 w-5 text-blue-600" />
-            Sync Controls
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Sync Progress */}
-          {syncStatus.isSyncing && (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-700">
-                  Synchronizing...
-                </span>
-                <span className="text-sm text-gray-500">
-                  {syncedScans.length} of {offlineScans.length}
-                </span>
-              </div>
-              <Progress value={syncProgress} className="h-2" />
-              <div className="flex items-center gap-2 text-sm text-blue-600">
-                <RefreshCw className="h-4 w-4 animate-spin" />
-                Processing your offline scans...
-              </div>
-            </div>
-          )}
 
           {/* Action Buttons */}
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <Button
-              onClick={handleSync}
+          <div className="mb-3 flex gap-2">
+            <button
+              onClick={syncAllPendingScans}
               disabled={
-                !syncStatus.isOnline ||
                 syncStatus.isSyncing ||
-                pendingScans.length === 0
+                !syncStatus.isOnline ||
+                syncStatus.pendingCount === 0
               }
-              className="h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              className="bg-primary flex flex-1 items-center justify-center gap-2 rounded-md px-4 py-2.5 font-medium text-white transition-colors disabled:bg-gray-300 disabled:text-gray-500"
             >
-              <CloudUpload className="mr-2 h-4 w-4" />
-              {syncStatus.isSyncing
-                ? "Syncing..."
-                : `Sync ${pendingScans.length} Items`}
-            </Button>
+              {syncStatus.isSyncing ? (
+                <>
+                  <RefreshCw className="h-4 w-4 animate-spin" />
+                  Syncing...
+                </>
+              ) : (
+                <>
+                  <Upload className="h-4 w-4" />
+                  Sync Now
+                </>
+              )}
+            </button>
 
-            <Button
-              variant="outline"
-              onClick={handleClearSynced}
-              disabled={syncStatus.isSyncing || syncedScans.length === 0}
-              className="h-12 border-gray-300 hover:bg-gray-50"
+            <button
+              onClick={() => setShowDetails(!showDetails)}
+              className="rounded-md border border-gray-300 px-4 py-2.5 text-gray-700 transition-colors hover:bg-gray-50"
             >
-              <Trash2 className="mr-2 h-4 w-4" />
-              Clear {syncedScans.length} Synced Items
-            </Button>
+              {showDetails ? (
+                <ChevronUp className="h-4 w-4" />
+              ) : (
+                <ChevronDown className="h-4 w-4" />
+              )}
+            </button>
           </div>
+
+          {/* Progress Bar */}
+          {syncStatus.isSyncing && (
+            <div className="mb-3">
+              <div className="h-2 overflow-hidden rounded-full bg-gray-200">
+                <div
+                  className="bg-secondary h-full animate-pulse rounded-full"
+                  style={{ width: "60%" }}
+                />
+              </div>
+            </div>
+          )}
 
           {/* Sync Errors */}
           {syncStatus.syncErrors.length > 0 && (
-            <Alert variant="destructive" className="border-red-200 bg-red-50">
-              <AlertTriangle className="h-4 w-4" />
-              <AlertDescription>
-                <div className="space-y-2">
-                  <div className="font-medium">
-                    Synchronization Issues Detected
-                  </div>
-                  <div className="space-y-1">
-                    {syncStatus.syncErrors.slice(0, 3).map((error, index) => (
-                      <div
-                        key={index}
-                        className="flex items-start gap-2 text-sm"
-                      >
-                        <XCircle className="mt-0.5 h-3 w-3 flex-shrink-0" />
-                        {error}
-                      </div>
-                    ))}
-                    {syncStatus.syncErrors.length > 3 && (
-                      <div className="text-sm font-medium text-red-600">
-                        +{syncStatus.syncErrors.length - 3} more errors
-                      </div>
-                    )}
-                  </div>
+            <div className="mb-3 rounded-lg border border-red-200 bg-red-50 p-3">
+              <div className="mb-2 flex items-center gap-2">
+                <AlertCircle className="h-4 w-4 text-red-500" />
+                <span className="text-sm font-medium text-red-800">
+                  Sync Errors
+                </span>
+              </div>
+              {syncStatus.syncErrors.map((error, index) => (
+                <div key={index} className="text-sm text-red-700">
+                  {error}
                 </div>
-              </AlertDescription>
-            </Alert>
+              ))}
+            </div>
           )}
 
-          {/* Offline Notice */}
+          {/* Network Status Alert */}
           {!syncStatus.isOnline && (
-            <Alert className="border-orange-200 bg-orange-50">
-              <WifiOff className="h-4 w-4 text-orange-600" />
-              <AlertDescription className="text-orange-800">
-                <div className="mb-1 font-medium">Working in Offline Mode</div>
-                Your scans are being saved locally and will sync automatically
-                when you're back online.
-              </AlertDescription>
-            </Alert>
+            <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3">
+              <WifiOff className="h-4 w-4 text-red-500" />
+              <span className="text-sm text-red-800">
+                No internet connection. Scans will sync when online.
+              </span>
+            </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Scan History */}
-      {offlineScans.length > 0 && (
-        <Card className="border-0 shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-green-600" />
-              Recent Scans
-              <Badge variant="secondary" className="ml-auto">
-                {offlineScans.length} total
-              </Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {offlineScans
-                .sort((a, b) => b.timestamp - a.timestamp)
-                .slice(0, 8)
-                .map((scan, index) => (
-                  <div
-                    key={scan.id}
-                    className={`group relative cursor-pointer rounded-xl border p-4 transition-all duration-200 hover:shadow-md ${
-                      selectedScan === scan.id
-                        ? "border-blue-300 bg-blue-50"
-                        : "border-gray-200 hover:border-gray-300"
-                    }`}
-                    onClick={() =>
-                      setSelectedScan(selectedScan === scan.id ? null : scan.id)
-                    }
-                  >
-                    <div className="flex items-center gap-4">
-                      {/* Image Thumbnail */}
-                      <div className="relative">
-                        <div className="h-16 w-16 overflow-hidden rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 shadow-sm">
-                          {scan.imageData && (
-                            <img
-                              src={scan.imageData}
-                              alt="Scan"
-                              className="h-full w-full object-cover"
-                            />
-                          )}
-                        </div>
-                        {/* Status Indicator */}
-                        <div
-                          className={`absolute -top-1 -right-1 h-5 w-5 rounded-full border-2 border-white shadow-sm ${
-                            scan.synced
-                              ? "bg-green-500"
-                              : scan.retryCount >= 3
-                                ? "bg-red-500"
-                                : "bg-orange-500"
-                          }`}
-                        >
-                          {scan.synced ? (
-                            <CheckCircle2 className="m-0.5 h-3 w-3 text-white" />
-                          ) : scan.retryCount >= 3 ? (
-                            <XCircle className="m-0.5 h-3 w-3 text-white" />
-                          ) : (
-                            <Clock className="m-0.5 h-3 w-3 text-white" />
-                          )}
-                        </div>
-                      </div>
+        {/* Pending Scans Details */}
+        {showDetails && (
+          <div className="space-y-3">
+            <h2 className="mb-3 font-medium text-gray-900">Pending Scans</h2>
 
-                      {/* Scan Info */}
-                      <div className="min-w-0 flex-1">
-                        <div className="mb-2 flex items-center gap-3">
-                          <h4 className="truncate font-semibold text-gray-900 capitalize">
-                            {scan.result.replace("-", " ").replace("_", " ")}
-                          </h4>
-                          <Badge
-                            variant="outline"
-                            className={`text-xs ${
-                              scan.synced
-                                ? "border-green-300 bg-green-50 text-green-700"
-                                : scan.retryCount >= 3
-                                  ? "border-red-300 bg-red-50 text-red-700"
-                                  : "border-orange-300 bg-orange-50 text-orange-700"
-                            }`}
+            {pendingScans.length === 0 ? (
+              <div className="py-8 text-center text-gray-500">
+                <CheckCircle className="mx-auto mb-3 h-12 w-12 text-green-500" />
+                <p>All scans are synced!</p>
+              </div>
+            ) : (
+              pendingScans.map((scan) => (
+                <div
+                  key={scan.id}
+                  className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm"
+                >
+                  <div className="flex gap-3 p-4">
+                    {/* Image Thumbnail */}
+                    <div className="flex-shrink-0">
+                      <div className="h-16 w-16 overflow-hidden rounded-lg border border-gray-200 bg-gray-100">
+                        <img
+                          src={scan.imageData}
+                          alt={scan.result}
+                          className="h-full w-full object-cover"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = "none";
+                            target.nextElementSibling?.classList.remove(
+                              "hidden",
+                            );
+                          }}
+                        />
+                        <div className="flex h-full w-full items-center justify-center text-gray-400">
+                          <svg
+                            className="h-6 w-6"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
                           >
-                            {scan.synced
-                              ? "Synced"
-                              : scan.retryCount >= 3
-                                ? "Failed"
-                                : "Pending"}
-                            {scan.retryCount > 0 &&
-                              !scan.synced &&
-                              ` (${scan.retryCount})`}
-                          </Badge>
-                        </div>
-
-                        <div className="flex items-center gap-4 text-sm text-gray-500">
-                          <div className="flex items-center gap-1">
-                            <Calendar className="h-3 w-3" />
-                            {new Date(scan.timestamp).toLocaleDateString()}
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Zap className="h-3 w-3" />
-                            {(scan.percentage * 100).toFixed(1)}% confidence
-                          </div>
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                            />
+                          </svg>
                         </div>
                       </div>
-
-                      {/* Expand Arrow */}
-                      <ChevronRight
-                        className={`h-5 w-5 text-gray-400 transition-transform ${
-                          selectedScan === scan.id ? "rotate-90" : ""
-                        }`}
-                      />
                     </div>
 
-                    {/* Expanded Details */}
-                    {selectedScan === scan.id && (
-                      <div className="mt-4 space-y-3 border-t border-gray-200 pt-4">
-                        <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
-                          <div>
-                            <div className="mb-1 font-medium text-gray-700">
-                              Location
-                            </div>
-                            <div className="flex items-center gap-1 text-gray-600">
-                              <MapPin className="h-3 w-3" />
-                              {scan.locationData.latitude.toFixed(6)},{" "}
-                              {scan.locationData.longitude.toFixed(6)}
-                            </div>
-                          </div>
-                          <div>
-                            <div className="mb-1 font-medium text-gray-700">
-                              Scan Time
-                            </div>
-                            <div className="text-gray-600">
-                              {new Date(scan.timestamp).toLocaleString()}
-                            </div>
+                    {/* Content */}
+                    <div className="min-w-0 flex-1">
+                      {/* Header Row */}
+                      <div className="mb-2 flex items-start justify-between">
+                        <div className="min-w-0 flex-1">
+                          <h3 className="truncate text-base font-semibold text-gray-900">
+                            {scan.result}
+                          </h3>
+                          <div className="mt-1 flex items-center gap-2">
+                            <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium whitespace-nowrap text-blue-800">
+                              {scan.percentage}% confident
+                            </span>
+                            {scan.retryCount > 0 && (
+                              <span
+                                className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap ${
+                                  scan.retryCount >= 2
+                                    ? "bg-red-100 text-red-800"
+                                    : "bg-yellow-100 text-yellow-800"
+                                }`}
+                              >
+                                Retry {scan.retryCount}/3
+                              </span>
+                            )}
                           </div>
                         </div>
 
-                        {scan.resultArr.length > 1 && (
-                          <div>
-                            <div className="mb-2 font-medium text-gray-700">
-                              Alternative Results
-                            </div>
-                            <div className="space-y-1">
-                              {scan.resultArr.slice(1, 4).map((result, idx) => (
-                                <div
-                                  key={idx}
-                                  className="flex justify-between text-sm"
-                                >
-                                  <span className="text-gray-600 capitalize">
-                                    {result.id
-                                      .replace("-", " ")
-                                      .replace("_", " ")}
-                                  </span>
-                                  <span className="text-gray-500">
-                                    {(result.percentage * 100).toFixed(1)}%
-                                  </span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
+                        <div className="ml-3 flex flex-col items-end text-right">
+                          <span className="mb-1 text-xs text-gray-400">
+                            {getTimeAgo(scan.timestamp)}
+                          </span>
+                          {scan.retryCount >= 2 && (
+                            <AlertCircle className="h-4 w-4 text-red-500" />
+                          )}
+                        </div>
                       </div>
-                    )}
-                  </div>
-                ))}
 
-              {offlineScans.length > 8 && (
-                <div className="py-4 text-center">
-                  <div className="inline-flex items-center gap-2 rounded-lg bg-gray-50 px-4 py-2 text-sm text-gray-500">
-                    <Database className="h-4 w-4" />
-                    {offlineScans.length - 8} more scans in storage
+                      {/* Details Row */}
+                      <div className="space-y-2">
+                        <div className="flex items-center text-xs text-gray-500">
+                          <Clock className="mr-1.5 h-3 w-3" />
+                          {formatTimestamp(scan.timestamp)}
+                        </div>
+
+                        <div className="flex items-center text-xs text-gray-500">
+                          <MapPin className="mr-1.5 h-3 w-3" />
+                          <span className="truncate">
+                            {scan.locationData.latitude.toFixed(4)},{" "}
+                            {scan.locationData.longitude.toFixed(4)}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Error State */}
+                      {scan.retryCount >= 2 && (
+                        <div className="mt-3 flex items-center gap-1.5 rounded-md border border-red-100 bg-red-50 px-2 py-1.5 text-xs text-red-600">
+                          <AlertCircle className="h-3 w-3 flex-shrink-0" />
+                          <span>Multiple sync failures - check connection</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+              ))
+            )}
 
-      {/* Empty State */}
-      {offlineScans.length === 0 && (
-        <Card className="border-0 shadow-lg">
-          <CardContent className="pt-12 pb-12">
-            <div className="mx-auto max-w-md text-center">
-              <div className="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-gray-100 to-gray-200">
-                <CloudUpload className="h-10 w-10 text-gray-400" />
-              </div>
-              <h3 className="mb-3 text-xl font-semibold text-gray-900">
-                No Offline Scans Yet
-              </h3>
-              <p className="mb-6 text-gray-600">
-                When you scan bananas while offline, they'll appear here and
-                sync automatically when you're back online.
-              </p>
-              <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
-                <div className="mb-1 flex items-center gap-2 text-sm font-medium text-blue-800">
-                  <Zap className="h-4 w-4" />
-                  Pro Tip
-                </div>
-                <p className="text-sm text-blue-700">
-                  The app works seamlessly offline using local AI models. Your
-                  scans will be enhanced with cloud data once synced.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Footer Stats */}
-      <div className="py-6 text-center">
-        <div className="inline-flex items-center gap-6 rounded-full border bg-white px-6 py-3 shadow-lg">
-          <div className="flex items-center gap-2 text-sm">
-            <div className="h-3 w-3 rounded-full bg-green-500"></div>
-            <span className="text-gray-600">{syncedScans.length} Synced</span>
+            {pendingScans.length > 0 && (
+              <button
+                onClick={clearSyncedScans}
+                className="bg-danger text-light flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 font-medium transition-colors hover:bg-gray-200"
+              >
+                <Trash2 className="h-4 w-4" />
+                Clear Offline Scans
+              </button>
+            )}
           </div>
-          <Separator orientation="vertical" className="h-4" />
-          <div className="flex items-center gap-2 text-sm">
-            <div className="h-3 w-3 rounded-full bg-orange-500"></div>
-            <span className="text-gray-600">{pendingScans.length} Pending</span>
-          </div>
-          <Separator orientation="vertical" className="h-4" />
-          <div className="flex items-center gap-2 text-sm">
-            <div className="h-3 w-3 rounded-full bg-red-500"></div>
-            <span className="text-gray-600">{failedScans.length} Failed</span>
-          </div>
-        </div>
+        )}
       </div>
+
+      {/* Bottom Spacer for mobile navigation */}
+      <div className="h-20" />
     </div>
   );
-}
+};
 
-export default SyncDashboard;
+export default SynDashboard;

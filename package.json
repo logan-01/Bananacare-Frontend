@@ -9,7 +9,8 @@
     "lint": "next lint",
     "static": "next build && next export",
     "preview": "npx serve out",
-    "cap:build": "CAPACITOR_BUILD=true next build && npx cap sync",
+    "cap:build-dev": "cross-env CAPACITOR_BUILD=true next build && npx cap sync",
+    "cap:build-prod": "cross-env CAPACITOR_BUILD=true NEXT_PUBLIC_BACKEND_API_PRODUCTION=https://bananacare-backend-production.up.railway.app next build && npx cap sync",
     "cap:android": "npx cap sync && npx cap open android"
   },
   "dependencies": {
@@ -61,6 +62,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "^7.4.3",
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
@@ -68,6 +70,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "cross-env": "^10.0.0",
     "eslint": "^9",
     "eslint-config-next": "15.2.4",
     "prettier": "^3.5.3",
