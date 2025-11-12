@@ -55,7 +55,7 @@ function page() {
 
   return (
     <section
-      className={`flex scroll-mt-20 flex-col gap-8 px-4 md:px-10 lg:px-28 ${isNative ? "mt-6 pb-24" : "mb-16"}`}
+      className={`flex scroll-mt-20 flex-col items-center gap-8 px-4 md:px-10 lg:px-28 ${isNative ? "mt-6 pb-24" : "mb-16"}`}
       id="about"
     >
       {/* Header Section */}

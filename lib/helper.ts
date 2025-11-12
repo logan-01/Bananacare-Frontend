@@ -100,32 +100,29 @@ export async function getIsBanana(file: File) {
   try {
     if (!file) throw new Error("No file provided");
 
-    // Convert to base64
+    // Convert file to ArrayBuffer (send as binary, not base64)
     const arrayBuffer = await file.arrayBuffer();
-    const base64Image = Buffer.from(arrayBuffer).toString("base64");
 
-    // Call Hugging Face API
+    // Call Hugging Face API with correct endpoint
     const response = await fetch(`${hfBaseUrl}/google/vit-base-patch16-224`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${hfAccesToken}`,
-        "Content-Type": "application/json",
+        "Content-Type": file.type || "image/jpeg", // Use actual file MIME type
       },
-      body: JSON.stringify({
-        inputs: `data:image/jpeg;base64,${base64Image}`,
-      }),
+      body: arrayBuffer, // Send binary data directly
     });
 
     if (!response.ok) {
-      throw new Error(`HF API error: ${response.statusText}`);
+      const errorText = await response.text();
+      throw new Error(`HF API error: ${response.statusText} - ${errorText}`);
     }
 
     const result = await response.json();
 
     // Check if banana is detected
-    const isBanana = result.some(
-      (p: { label: string; score: number }) =>
-        p.label.toLowerCase() === "banana",
+    const isBanana = result.some((p: { label: string; score: number }) =>
+      p.label.toLowerCase().includes("banana"),
     );
 
     return { isBanana, predictions: result };

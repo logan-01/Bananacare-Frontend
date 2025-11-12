@@ -14,7 +14,8 @@ const DownloadPage = () => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [showQRCode, setShowQRCode] = useState(false);
 
-  const appURL = "https://www.npmjs.com/package/qrcode.react";
+  const appURL =
+    "https://github.com/logan-01/Bananacare-Frontend/releases/download/v1.0.0/Bananacare-v1.0.0.apk";
 
   const handleDownload = async () => {
     setIsDownloading(true);
@@ -24,10 +25,10 @@ const DownloadPage = () => {
       setIsDownloading(false);
       // In a real app, trigger the APK download here
       console.log("Downloading APK...");
-      // const link = document.createElement('a');
-      // link.href = '/path/to/your-app.apk';
-      // link.download = 'YourApp_v2.1.0.apk';
-      // link.click();
+      const link = document.createElement("a");
+      link.href = appURL;
+      link.download = "Bananacare-v1.0.0.apk";
+      link.click();
     }, 2000);
   };
 
