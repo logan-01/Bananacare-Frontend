@@ -228,7 +228,7 @@ function Contact() {
               </div>
 
               {/* Social Media Links */}
-              <div className="border-light/20 border-t pt-4">
+              <div className="border-light/20 hidden border-t pt-4">
                 <p className="text-light/80 mb-4 text-sm">
                   Follow us on social media
                 </p>
