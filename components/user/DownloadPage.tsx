@@ -14,8 +14,10 @@ const DownloadPage = () => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [showQRCode, setShowQRCode] = useState(false);
 
-  const appURL =
-    "https://github.com/logan-01/Bananacare-Frontend/releases/download/v1.0.0/Bananacare-v1.0.0.apk";
+  // const appURL =
+  //   "https://github.com/logan-01/Bananacare-Frontend/releases/download/v1.0.0/Bananacare-v1.0.0.apk";
+
+  const appURL = "https://www.bananacare.site/";
 
   const handleDownload = async () => {
     setIsDownloading(true);
