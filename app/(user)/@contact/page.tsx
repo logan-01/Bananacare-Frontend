@@ -85,12 +85,12 @@ function Contact() {
       href: "mailto:bananacare@gmail.com",
     },
     {
-      title: "+63 990 231 3429",
+      title: "+63 991 763 9539",
       icon: MdPhone,
-      href: "tel:+639902313429",
+      href: "tel:+639917639539",
     },
     {
-      title: "Conrazon, Bansud Oriental Mindoro PH",
+      title: "Bansud Oriental Mindoro PH",
       icon: MdLocationOn,
       href: "https://maps.google.com/?q=Conrazon,+Bansud+Oriental+Mindoro+PH",
     },
@@ -275,7 +275,7 @@ function Contact() {
                           <FormLabel>Full Name</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="John Doe"
+                              placeholder="Bananacare"
                               {...field}
                               disabled={isSubmitting}
                               className="ring-primary/80 border border-gray-300 focus-visible:ring-1"
@@ -298,7 +298,7 @@ function Contact() {
                           <FormControl>
                             <Input
                               type="email"
-                              placeholder="john@example.com"
+                              placeholder="banancare@account.com"
                               {...field}
                               disabled={isSubmitting}
                               className="ring-primary/80 border border-gray-300 focus-visible:ring-1"
@@ -322,7 +322,7 @@ function Contact() {
                         <FormControl>
                           <Input
                             type="tel"
-                            placeholder="+63 990 231 3429"
+                            placeholder="+63 991 763 9539"
                             {...field}
                             disabled={isSubmitting}
                             className="ring-primary/80 border border-gray-300 focus-visible:ring-1"
@@ -344,7 +344,7 @@ function Contact() {
                         <FormLabel>Message</FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder="Tell us about your project, questions, or how we can help you..."
+                            placeholder="Tell us about your concern or question regarding BananaCare..."
                             rows={5}
                             {...field}
                             disabled={isSubmitting}
