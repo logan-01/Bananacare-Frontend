@@ -10,7 +10,7 @@
     "static": "next build && next export",
     "preview": "npx serve out",
     "cap:build-dev": "cross-env CAPACITOR_BUILD=true next build && npx cap sync",
-    "cap:build-prod": "cross-env CAPACITOR_BUILD=true NEXT_PUBLIC_BACKEND_API_PRODUCTION=https://bananacare-backend-production.up.railway.app next build && npx cap sync",
+    "cap:build-prod": "cross-env CAPACITOR_BUILD=true NEXT_PUBLIC_BACKEND_API_PRODUCTION=https://bananacare-backend.onrender.com next build && npx cap sync",
     "cap:android": "npx cap sync && npx cap open android"
   },
   "dependencies": {

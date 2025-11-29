@@ -20,7 +20,7 @@ const developmentUrl = isNative
   ? process.env.NEXT_PUBLIC_BACKEND_API_DEVELOPMENT_MOBILE
   : process.env.NEXT_PUBLIC_BACKEND_API_DEVELOPMENT;
 const productionUrl = process.env.NEXT_PUBLIC_BACKEND_API_PRODUCTION;
-const apiBaseUrl = productionUrl || developmentUrl;
+export const apiBaseUrl = productionUrl || developmentUrl;
 //Openstreetmap
 const osmBaseUrl = process.env.NEXT_PUBLIC_OSM_API;
 //Huggingface
@@ -100,29 +100,32 @@ export async function getIsBanana(file: File) {
   try {
     if (!file) throw new Error("No file provided");
 
-    // Convert file to ArrayBuffer (send as binary, not base64)
+    // Convert to base64
     const arrayBuffer = await file.arrayBuffer();
+    const base64Image = Buffer.from(arrayBuffer).toString("base64");
 
-    // Call Hugging Face API with correct endpoint
+    // Call Hugging Face API
     const response = await fetch(`${hfBaseUrl}/google/vit-base-patch16-224`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${hfAccesToken}`,
-        "Content-Type": file.type || "image/jpeg", // Use actual file MIME type
+        "Content-Type": "application/json",
       },
-      body: arrayBuffer, // Send binary data directly
+      body: JSON.stringify({
+        inputs: `data:image/jpeg;base64,${base64Image}`,
+      }),
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`HF API error: ${response.statusText} - ${errorText}`);
+      throw new Error(`HF API error: ${response.statusText}`);
     }
 
     const result = await response.json();
 
     // Check if banana is detected
-    const isBanana = result.some((p: { label: string; score: number }) =>
-      p.label.toLowerCase().includes("banana"),
+    const isBanana = result.some(
+      (p: { label: string; score: number }) =>
+        p.label.toLowerCase() === "banana",
     );
 
     return { isBanana, predictions: result };
@@ -373,8 +376,8 @@ export function getDiseaseStat(scans: ScanResultType[]) {
     return {
       ...disease,
       count,
-      countPercentage: Number(countPercentage.toFixed(1)),
-      avgConfidence: finalAvgConfidence,
+      countPercentage: Number(countPercentage.toFixed(2)),
+      avgConfidence: Number(finalAvgConfidence.toFixed(2)),
       uniqueLocations, // <-- added
     };
   });

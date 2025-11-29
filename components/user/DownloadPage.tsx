@@ -14,10 +14,9 @@ const DownloadPage = () => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [showQRCode, setShowQRCode] = useState(false);
 
-  // const appURL =
-  //   "https://github.com/logan-01/Bananacare-Frontend/releases/download/v1.0.0/Bananacare-v1.0.0.apk";
+  const appURL = "https://github.com/logan-01/Bananacare-Frontend/releases/download/v1.0.1/Bananacare.v1.0.1.apk";
 
-  const appURL = "https://www.bananacare.site/";
+  // const appURL = "https://www.bananacare.site/";
 
   const handleDownload = async () => {
     setIsDownloading(true);
@@ -29,7 +28,7 @@ const DownloadPage = () => {
       console.log("Downloading APK...");
       const link = document.createElement("a");
       link.href = appURL;
-      link.download = "Bananacare-v1.0.0.apk";
+      link.download = "Bananacare-v1.0.1.apk";
       link.click();
     }, 2000);
   };
@@ -109,6 +108,9 @@ const DownloadPage = () => {
 
           <p className="text-xs text-gray-500">
             Compatible with Android 6.0 and above • No ads • Free forever
+          </p>
+          <p className="text-xs  text-primary font-bold">
+            Update Version - Bananacare v1.0.1
           </p>
         </div>
       </div>
