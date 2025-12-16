@@ -5,12 +5,19 @@ import React, { useState } from "react";
 
 import { MdChevronRight } from "react-icons/md";
 import DiseaseModal from "@/components/modals/DiseaseModal";
-import { isNative, bananaDiseases, BananaDiseaseType } from "@/lib/constant";
+import {
+  isNative,
+  // bananaDiseases,
+  BananaDiseaseType,
+  useBananaDiseases,
+} from "@/lib/constant";
 
 function Page() {
   const [selectedDisease, setSelectedDisease] =
     useState<BananaDiseaseType | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const bananaDiseases = useBananaDiseases();
 
   const filteredBananaDisease = bananaDiseases.filter(
     (disease) => disease.id !== "healthy" && disease.id !== "not-banana",

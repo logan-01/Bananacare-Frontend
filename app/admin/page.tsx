@@ -25,11 +25,11 @@ import {
   getWeeklyTrends,
   getDiseaseDistribution,
 } from "@/lib/helper";
-// import { ScanResultType } from "@/components/admin/Admin_DataTable/columns";
-// import { ScanResult } from "../generated/prisma";
-// import { ScanResultType } from "@/backup/admin_components/Admin_DataTable/columns";
+import { useBananaDiseases } from "@/lib/constant";
 
 function page() {
+  const bananaDiseases = useBananaDiseases();
+
   const scanResult = useScanResult();
 
   // Configuration for Stat Cards
@@ -106,7 +106,10 @@ function page() {
   ];
 
   // Configuration for Disease Distribution
-  const diseaseDistribution = getDiseaseDistribution(scanResult);
+  const diseaseDistribution = getDiseaseDistribution(
+    scanResult,
+    bananaDiseases,
+  );
 
   return (
     <div className="flex h-full w-full flex-col overflow-y-auto px-6">

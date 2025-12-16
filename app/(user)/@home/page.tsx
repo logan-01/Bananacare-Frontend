@@ -10,6 +10,7 @@ import {
   RiBarChartLine,
 } from "react-icons/ri";
 import { FaCheck } from "react-icons/fa6";
+import { useTranslations } from "next-intl";
 
 import PlatformWrapper from "@/components/wrapper/PlatformWrapper";
 import ScanForm from "@/components/user/ScanForm";
@@ -19,22 +20,24 @@ import AdminButton from "@/components/admin/AdminButton";
 import { Bell, FolderSync } from "lucide-react";
 import SyncDashboard from "@/components/user/SyncDashboard";
 
-function page() {
+function Page() {
+  const t = useTranslations("home");
+
   const features = [
     {
       icon: RiSparklingLine,
-      title: "AI-Powered",
-      description: "Advanced machine learning for accurate disease detection",
+      title: t("features.items.0.title"),
+      description: t("features.items.0.description"),
     },
     {
       icon: RiShieldCheckLine,
-      title: "Instant Results",
-      description: "Get diagnosis and treatment recommendations in seconds",
+      title: t("features.items.1.title"),
+      description: t("features.items.1.description"),
     },
     {
       icon: RiBarChartLine,
-      title: "Crop Protection",
-      description: "Protect your harvest and maximize yield potential",
+      title: t("features.items.2.title"),
+      description: t("features.items.2.description"),
     },
   ];
 
@@ -45,10 +48,9 @@ function page() {
     >
       {isNative && (
         <PlatformWrapper
-          title="Sync Manager"
+          title={t("syncManager")}
           trigger={
             <div className="bg-primary absolute top-6 right-3 z-[99] flex h-10 w-10 items-center justify-center rounded-full">
-              {" "}
               <FolderSync className="text-light h-6 w-6" />
             </div>
           }
@@ -65,20 +67,18 @@ function page() {
           <AdminButton />
 
           <h1 className="font-clash-grotesk text-3xl font-semibold text-white md:text-6xl lg:text-6xl">
-            Detect Banana Disease
+            {t("heading.main")}
             <br />
-            <span className="text-secondary">with Precision</span>
+            <span className="text-secondary">{t("heading.highlight")}</span>
           </h1>
 
           <p className="mx-auto max-w-3xl text-base leading-relaxed text-white/90 md:text-lg">
-            Revolutionary AI technology that identifies banana diseases
-            instantly.
+            {t("description.intro")}
             <span className="text-secondary font-semibold">
               {" "}
-              Snap, analyze, and protect
+              {t("description.highlight")}
             </span>{" "}
-            your crops with professional-grade diagnostics in the palm of your
-            hand.
+            {t("description.outro")}
           </p>
         </div>
 
@@ -86,11 +86,11 @@ function page() {
         <div className="flex w-full flex-col justify-center gap-2 sm:flex-row md:w-[60%] md:gap-4 md:px-10">
           {/* Primary Scan Button */}
           <PlatformWrapper
-            title="Scan Banana Disease"
+            title={t("buttons.scanTitle")}
             trigger={
               <button className="group bg-primary hover:bg-primary/90 flex w-full items-center justify-center gap-3 rounded-xl px-4 py-4 text-lg font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-xl sm:flex-1">
                 <RiCameraLine className="h-6 w-6" />
-                Start Scanning
+                {t("buttons.startScanning")}
                 <RiArrowRightSLine className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </button>
             }
@@ -100,11 +100,11 @@ function page() {
 
           {/* Secondary Guide Button */}
           <PlatformWrapper
-            title="Capturing Guide"
+            title={t("buttons.guideTitle")}
             trigger={
               <button className="group flex w-full items-center justify-center gap-3 rounded-xl border-2 border-white/30 bg-white/10 px-4 py-4 text-lg font-semibold text-white backdrop-blur-md transition-all duration-300 hover:scale-105 hover:bg-white/20 sm:flex-1">
                 <RiBookOpenLine className="h-6 w-6" />
-                View Guide
+                {t("buttons.viewGuide")}
                 <RiArrowRightSLine className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </button>
             }
@@ -126,10 +126,10 @@ function page() {
         {/* Feature Heading */}
         <div className="text-center">
           <p className="text-secondary font-clash-grotesk text-3xl font-semibold md:text-5xl">
-            Features
+            {t("features.title")}
           </p>
           <p className="text-light text-base md:text-lg">
-            Discover What Makes BananaCare Smarter
+            {t("features.subtitle")}
           </p>
         </div>
 
@@ -155,11 +155,11 @@ function page() {
 
         <div className="flex items-center gap-2 pt-10">
           <FaCheck className="text-primary text-xl" />
-          <p className="text-light">Scan. Detect. Protect.</p>
+          <p className="text-light">{t("tagline")}</p>
         </div>
       </div>
     </section>
   );
 }
 
-export default page;
+export default Page;

@@ -1,0 +1,294 @@
+{
+  "home": {
+    "syncManager": "Sync Manager",
+    "heading": {
+      "main": "Detect Banana Disease",
+      "highlight": "with Precision"
+    },
+    "description": {
+      "intro": "Revolutionary AI technology that identifies banana diseases instantly.",
+      "highlight": "Snap, analyze, and protect",
+      "outro": "your crops with professional-grade diagnostics in the palm of your hand."
+    },
+    "buttons": {
+      "startScanning": "Start Scanning",
+      "viewGuide": "View Guide",
+      "scanTitle": "Scan Banana Disease",
+      "guideTitle": "Capturing Guide"
+    },
+    "features": {
+      "title": "Features",
+      "subtitle": "Discover What Makes BananaCare Smarter",
+      "items": [
+        {
+          "title": "AI-Powered",
+          "description": "Advanced machine learning for accurate disease detection"
+        },
+        {
+          "title": "Instant Results",
+          "description": "Get diagnosis and treatment recommendations in seconds"
+        },
+        {
+          "title": "Crop Protection",
+          "description": "Protect your harvest and maximize yield potential"
+        }
+      ]
+    },
+    "tagline": "Scan. Detect. Protect."
+  },
+  "diseases": {
+    "black-sigatoka": {
+      "name": "Black Sigatoka Disease",
+      "shortDescription": "A severe fungal leaf disease that reduces yield by destroying photosynthetic area",
+      "description": "Black Sigatoka (Mycosphaerella fijiensis) causes dark streaks on banana leaves that expand into necrotic patches, drastically reducing photosynthesis. The disease spreads quickly in humid climates through airborne spores, leading to poor fruit yield and quality. Management relies on fungicide sprays, resistant varieties, and strict field sanitation.",
+      "symptoms": [
+        "Dark streaks on leaves",
+        "Yellowing and early leaf death",
+        "Smaller bunch size",
+        "Spreading necrotic patches"
+      ],
+      "treatmentMethods": [
+        "Apply fungicides such as mancozeb, propiconazole, or chlorothalonil.",
+        "Prune and destroy infected leaves to reduce spore load.",
+        "Rotate fungicides to prevent resistance development."
+      ],
+      "preventionTips": [
+        "Plant resistant cultivars if available.",
+        "Ensure good air circulation by maintaining proper spacing.",
+        "Avoid overhead irrigation to reduce leaf wetness."
+      ],
+      "recommendations": [
+        "Use resistant cultivars if available.",
+        "Prune and remove infected leaves to reduce spore load.",
+        "Improve air circulation by maintaining proper spacing.",
+        "Apply fungicides like mancozeb, propiconazole, or chlorothalonil based on local agricultural guidelines."
+      ]
+    },
+    "bmv": {
+      "name": "Bract Mosaic Virus",
+      "shortDescription": "A viral disease causing leaf mosaics, streaks, and reduced growth.",
+      "description": "Banana Bract Mosaic Virus, a Potyvirus spread mainly by Pentalonia nigronervosa aphids, causes mosaic streaks, spindle-shaped marks, and bract or leaf distortion. Infected plants suffer stunted growth and lower yields. Control depends on aphid management, sanitation, and using virus-free planting materials.",
+      "symptoms": [
+        "Mosaic streaks on leaves",
+        "Brown streaks on bracts",
+        "Twisted leaf growth",
+        "Fewer bunches"
+      ],
+      "treatmentMethods": [
+        "No direct cure—infected plants should be removed.",
+        "Use systemic insecticides to reduce vector populations."
+      ],
+      "preventionTips": [
+        "Plant only virus-free materials.",
+        "Control vectors such as aphids and thrips.",
+        "Avoid intercropping with virus host plants like sugarcane."
+      ],
+      "recommendations": [
+        "Use virus-free planting materials.",
+        "Control vector insects like aphids and thrips using insecticides.",
+        "Regularly inspect and remove infected plants.",
+        "Avoid intercropping with susceptible hosts (e.g., sugarcane)."
+      ]
+    },
+    "cordana": {
+      "name": "Cordana Disease",
+      "shortDescription": "A mild-to-moderate fungal leaf spot disease that stresses plants under heavy infection.",
+      "description": "Cordana leaf spot (Cordana musae) produces brown lesions with yellow halos that can merge and reduce photosynthesis. While less damaging than Black Sigatoka, severe infections weaken plants and reduce productivity. It is managed with proper sanitation, good field practices, and timely fungicide use.",
+      "symptoms": [
+        "Brown spots on leaves",
+        "Yellow halos around lesions",
+        "Premature leaf drying",
+        "Weakened growth"
+      ],
+      "treatmentMethods": [
+        "Apply copper-based fungicides.",
+        "Remove and destroy heavily infected leaves."
+      ],
+      "preventionTips": [
+        "Improve soil drainage and avoid excess irrigation.",
+        "Maintain field sanitation to minimize fungal spread.",
+        "Avoid mechanical injury to plants."
+      ],
+      "recommendations": [
+        "Improve drainage and reduce excess humidity.",
+        "Remove and destroy infected leaves.",
+        "Apply fungicides (like copper-based ones) as needed.",
+        "Avoid mechanical damage to plants."
+      ]
+    },
+    "healthy": {
+      "name": "Banana Healthy",
+      "shortDescription": "A healthy banana plant with no signs of pests or diseases.",
+      "description": "A healthy banana plant with lush green leaves, strong stems, and optimal growth, free from major pests and diseases.",
+      "symptoms": [
+        "Bright green leaves",
+        "Strong pseudostem",
+        "No wilting or spots"
+      ],
+      "treatmentMethods": [],
+      "preventionTips": [
+        "Use certified disease-free planting materials.",
+        "Maintain proper irrigation and fertilization.",
+        "Regularly monitor for pests and diseases.",
+        "Apply organic mulch and compost."
+      ],
+      "recommendations": [
+        "Continue good agricultural practices.",
+        "Use disease-free planting materials.",
+        "Apply organic mulch and compost.",
+        "Regularly monitor for pests and diseases.",
+        "Maintain proper irrigation and fertilization schedules."
+      ]
+    },
+    "moko": {
+      "name": "Moko Disease",
+      "shortDescription": "A bacterial wilt disease that causes rapid plant death.",
+      "description": "Moko disease, caused by Ralstonia solanacearum, invades the banana's vascular system, leading to browning, wilting, and plant collapse. Fruits may show uneven ripening and internal streaks. It spreads through tools, planting material, and insects. Management requires sanitation, removal of infected plants, and disease-free seedlings.",
+      "symptoms": [
+        "Sudden leaf wilting",
+        "Yellow, collapsing leaves",
+        "Brown vascular streaks",
+        "Premature fruit ripening"
+      ],
+      "treatmentMethods": [
+        "No chemical cure—eradicate infected plants immediately.",
+        "Disinfect cutting and harvesting tools regularly."
+      ],
+      "preventionTips": [
+        "Use resistant varieties where available.",
+        "Prevent movement of soil, tools, and water from infected fields.",
+        "Apply strict quarantine in affected areas."
+      ],
+      "recommendations": [
+        "Remove and destroy infected plants immediately.",
+        "Use clean, disinfected tools.",
+        "Avoid movement of soil and water from infected areas.",
+        "Use resistant varieties where available.",
+        "Implement strict quarantine measures in affected areas."
+      ]
+    },
+    "panama": {
+      "name": "Panama Disease",
+      "shortDescription": "A destructive soil-borne fungal disease with no cure.",
+      "description": "Panama disease (Fusarium oxysporum f. sp. cubense) infects the vascular system, causing yellowing, wilting, and reddish-brown tissue discoloration. It is extremely difficult to eradicate as the fungus survives in soil for decades. Control focuses on resistant cultivars, crop rotation, and quarantine enforcement.",
+      "symptoms": [
+        "Yellowing older leaves",
+        "Splitting at stem base",
+        "Dark vascular streaks",
+        "Plant collapse"
+      ],
+      "treatmentMethods": [
+        "No effective chemical treatment.",
+        "Infected plants must be destroyed."
+      ],
+      "preventionTips": [
+        "Plant resistant cultivars (e.g., GCTCV-218, FHIA).",
+        "Avoid planting in Fusarium-contaminated soil.",
+        "Use biofungicides and organic amendments to improve soil health.",
+        "Rotate with non-host crops like legumes."
+      ],
+      "recommendations": [
+        "Use Fusarium-resistant banana cultivars (e.g., GCTCV-218 or FHIA varieties).",
+        "Avoid planting in contaminated soil.",
+        "Improve soil health with organic amendments and biofungicides.",
+        "Rotate crops with non-host species (e.g., legumes)."
+      ]
+    },
+    "not-banana": {
+      "name": "Not Banana",
+      "shortDescription": "The scanned image does not belong to a banana plant.",
+      "description": "This input does not correspond to a banana plant. Please ensure the scanned image is of a banana leaf or plant part.",
+      "symptoms": ["Not applicable"],
+      "treatmentMethods": [],
+      "preventionTips": ["Ensure correct plant image before scanning."],
+      "recommendations": []
+    },
+    "weevil": {
+      "name": "Weevil Disease",
+      "shortDescription": "An insect pest that bores into the corm and weakens plants.",
+      "description": "The banana weevil (Cosmopolites sordidus) lays eggs at the plant base, and larvae bore into the pseudostem and rhizome, forming galleries. This internal damage weakens the plant, disrupts water and nutrient flow, and often causes toppling. Integrated pest management with traps, resistant varieties, and biological control is key for reducing infestations.",
+      "symptoms": [
+        "Tunnels in corm and stem",
+        "Yellowing, stunted growth",
+        "Weak or toppled plants",
+        "Smaller bunch size"
+      ],
+      "treatmentMethods": [
+        "Apply entomopathogenic fungi (Beauveria bassiana) where feasible.",
+        "Use insecticides only if infestation is severe."
+      ],
+      "preventionTips": [
+        "Use clean planting materials.",
+        "Install pseudostem traps to monitor and control adults.",
+        "Remove crop residues that harbor weevils."
+      ],
+      "recommendations": [
+        "Use clean planting material.",
+        "Apply pseudostem traps to monitor and control adult weevils.",
+        "Use entomopathogenic fungi or insecticides if infestation is severe.",
+        "Remove plant residues that attract weevils."
+      ]
+    }
+  },
+  "diseaseTypes": {
+    "Fungal": "Fungal",
+    "Viral": "Viral",
+    "Bacterial": "Bacterial",
+    "Pest": "Pest",
+    "Normal": "Normal",
+    "Invalid": "Invalid"
+  },
+  "diseaseSeverity": {
+    "High": "High",
+    "Medium": "Medium",
+    "None": "None"
+  },
+  "about": {
+    "header": {
+      "title": "Get to Know",
+      "highlight": "Bananacare",
+      "subtitle": "Uncover how BananaCare is redefining banana disease detection"
+    },
+    "cards": [
+      {
+        "icon": "/img/About.svg",
+        "title": "About BananaCare",
+        "subtitle": "Smart Tools for Banana Farmers",
+        "description": "BananaCare is a smart farming platform that helps banana farmers identify possible plant diseases using image analysis. By uploading photos of banana leaves, farmers can quickly receive insights that support early action and better crop management decisions.",
+        "featuresTitle": "Key Features:",
+        "features": [
+          "Image-Based Disease Detection",
+          "Fast Diagnosis Results",
+          "Supports Early Intervention",
+          "Works on Mobile Devices"
+        ]
+      },
+      {
+        "icon": "/img/Mission.svg",
+        "title": "Our Mission",
+        "subtitle": "Making Technology Useful on the Farm",
+        "description": "Our mission is to make modern agricultural technology practical and accessible for farmers. We focus on building simple, reliable tools that help farmers protect their crops without requiring technical expertise.",
+        "featuresTitle": "Key Features:",
+        "features": [
+          "Farmer-Centered Design",
+          "Easy to Use Interface",
+          "Accessible on Low-End Devices",
+          "Built for Real Farm Conditions"
+        ]
+      },
+      {
+        "icon": "/img/Goal.svg",
+        "title": "Our Goals",
+        "subtitle": "Supporting Sustainable Farming",
+        "description": "BananaCare aims to help reduce crop losses caused by late disease detection while improving overall farm productivity. By supporting informed decision-making, we contribute to sustainable farming and long-term food security.",
+        "featuresTitle": "Key Features:",
+        "features": [
+          "Reduce Disease-Related Losses",
+          "Improve Farm Decision-Making",
+          "Promote Sustainable Practices",
+          "Support Local Farmers"
+        ]
+      }
+    ]
+  }
+}

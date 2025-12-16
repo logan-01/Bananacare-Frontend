@@ -1,8 +1,10 @@
+// SOLUTION: Pass bananaDiseases as a parameter instead of calling the hook at module level
+
 import {
-  bananaDiseases,
   isNative,
   ScanResultType,
   severityColors,
+  BananaDiseaseType, // Import the type instead of the hook
 } from "./constant";
 
 //* Interfaces and Types
@@ -15,17 +17,17 @@ interface ScanPayload {
 }
 
 //* API Endpoints
-//Backend Endpoints
 const developmentUrl = isNative
   ? process.env.NEXT_PUBLIC_BACKEND_API_DEVELOPMENT_MOBILE
   : process.env.NEXT_PUBLIC_BACKEND_API_DEVELOPMENT;
 const productionUrl = process.env.NEXT_PUBLIC_BACKEND_API_PRODUCTION;
 export const apiBaseUrl = productionUrl || developmentUrl;
-//Openstreetmap
 const osmBaseUrl = process.env.NEXT_PUBLIC_OSM_API;
-//Huggingface
 const hfBaseUrl = process.env.NEXT_PUBLIC_HF_API;
 const hfAccesToken = process.env.NEXT_PUBLIC_HF_ACCESS_TOKEN;
+
+// ❌ REMOVE THIS LINE - Don't call hooks at module level
+// const bananaDiseases = useBananaDiseases();
 
 //* User Helper Functions
 export async function getReverseGeocode(latitude: number, longitude: number) {
@@ -34,7 +36,7 @@ export async function getReverseGeocode(latitude: number, longitude: number) {
       `${osmBaseUrl}?lat=${latitude}&lon=${longitude}&format=json`,
       {
         headers: {
-          "User-Agent": "Bananacare/1.0", // Recommended by Nominatim
+          "User-Agent": "Bananacare/1.0",
         },
       },
     );
@@ -44,14 +46,13 @@ export async function getReverseGeocode(latitude: number, longitude: number) {
     }
 
     const data = await response.json();
-    return data; // contains address info, display_name, etc.
+    return data;
   } catch (error) {
     console.error("Reverse geocoding failed:", error);
     return null;
   }
 }
 
-// Cloudinary API - Image Upload + Image Public Url
 export async function getImageUrl(formData: FormData) {
   try {
     const res = await fetch(`${apiBaseUrl}/upload`, {
@@ -89,7 +90,7 @@ export async function sendScanResult(payload: ScanPayload) {
       console.log("Scan Result sucessfully saved");
     }
 
-    return await response.json(); // optional: return server response
+    return await response.json();
   } catch (error) {
     console.error("Save scan error:", error);
     return null;
@@ -100,11 +101,9 @@ export async function getIsBanana(file: File) {
   try {
     if (!file) throw new Error("No file provided");
 
-    // Convert to base64
     const arrayBuffer = await file.arrayBuffer();
     const base64Image = Buffer.from(arrayBuffer).toString("base64");
 
-    // Call Hugging Face API
     const response = await fetch(`${hfBaseUrl}/google/vit-base-patch16-224`, {
       method: "POST",
       headers: {
@@ -122,7 +121,6 @@ export async function getIsBanana(file: File) {
 
     const result = await response.json();
 
-    // Check if banana is detected
     const isBanana = result.some(
       (p: { label: string; score: number }) =>
         p.label.toLowerCase() === "banana",
@@ -159,8 +157,6 @@ export async function getScanResult(): Promise<ScanResultType[]> {
     }
 
     const json = await response.json();
-
-    // API shape has { success: true, data: [...] }
     return json.data || [];
   } catch (error) {
     console.error("Error fetching scans:", error);
@@ -179,8 +175,6 @@ export async function deleteScanResult(id: string): Promise<boolean> {
     }
 
     const json = await response.json();
-
-    // API returns { success: true, message: "...", deletedId: "..." }
     return json.success || false;
   } catch (error) {
     console.error("Error deleting scan result:", error);
@@ -202,7 +196,6 @@ export function getScanStat(scans: ScanResultType[]) {
     ),
   ).size;
 
-  // ✅ Get the latest scan date
   const latestScanDate = scans.length
     ? new Date(
         Math.max(...scans.map((scan) => new Date(scan.createdAt).getTime())),
@@ -221,7 +214,6 @@ export function getScanStat(scans: ScanResultType[]) {
 export function getWeeklyTrends(scans: ScanResultType[]) {
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-  // ✅ Find the latest scan date
   const latestDate = scans.length
     ? new Date(
         Math.max(...scans.map((scan) => new Date(scan.createdAt).getTime())),
@@ -237,11 +229,9 @@ export function getWeeklyTrends(scans: ScanResultType[]) {
     };
   }
 
-  // ✅ Get the last 7 days range
   const startDate = new Date(latestDate);
-  startDate.setDate(latestDate.getDate() - 6); // rolling 7-day window
+  startDate.setDate(latestDate.getDate() - 6);
 
-  // Initialize last 7 days
   const weeklyTrends: {
     day: string;
     scans: number;
@@ -259,12 +249,10 @@ export function getWeeklyTrends(scans: ScanResultType[]) {
     });
   }
 
-  // Totals
   let weeklyTotalScans = 0;
   let weeklyTotalHealthy = 0;
   let weeklyTotalDiseased = 0;
 
-  // ✅ Aggregate scans within the window
   scans.forEach((scan) => {
     const scanDate = new Date(scan.createdAt);
     if (scanDate >= startDate && scanDate <= latestDate) {
@@ -293,27 +281,29 @@ export function getWeeklyTrends(scans: ScanResultType[]) {
   };
 }
 
-export function getDiseaseDistribution(scans: ScanResultType[]) {
+// ✅ Add bananaDiseases parameter
+export function getDiseaseDistribution(
+  scans: ScanResultType[],
+  bananaDiseases: BananaDiseaseType[],
+) {
   const filteredBananaDisease = bananaDiseases.filter(
     (disease) => disease.id !== "not-banana",
   );
 
-  const totalScans = scans.length || 1; // avoid divide by zero
+  const totalScans = scans.length || 1;
 
-  // Count by disease type
   const counts: Record<string, number> = {};
   scans.forEach((scan) => {
     counts[scan.result] = (counts[scan.result] || 0) + 1;
   });
 
-  // Map to structured output
   const distribution = filteredBananaDisease.map((disease) => {
     const count = counts[disease.id] || 0;
     const value = (count / totalScans) * 100;
     return {
       id: disease.id,
       name: disease.name,
-      value: Number(value.toFixed(1)), // 1 decimal
+      value: Number(value.toFixed(1)),
       count,
       color: disease.color,
     };
@@ -322,63 +312,58 @@ export function getDiseaseDistribution(scans: ScanResultType[]) {
   return distribution;
 }
 
-export function getDiseaseStat(scans: ScanResultType[]) {
+// ✅ Add bananaDiseases parameter
+export function getDiseaseStat(
+  scans: ScanResultType[],
+  bananaDiseases: BananaDiseaseType[],
+) {
   const filteredBananaDisease = bananaDiseases.filter(
     (disease) => disease.id !== "not-banana" && disease.id !== "healthy",
   );
 
-  const totalScans = scans.length || 1; // avoid divide by zero
+  const totalScans = scans.length || 1;
 
-  // Count by disease type
   const counts: Record<string, number> = {};
   scans.forEach((scan) => {
     counts[scan.result] = (counts[scan.result] || 0) + 1;
   });
 
-  // Track confidence sums and counts
   const confidenceSum: Record<string, number> = {};
   const confidenceCount: Record<string, number> = {};
-
-  // Track unique locations
   const diseaseLocations: Record<string, Set<string>> = {};
 
   scans.forEach((scan) => {
-    // Confidence
     confidenceSum[scan.result] =
       (confidenceSum[scan.result] || 0) + scan.percentage;
     confidenceCount[scan.result] = (confidenceCount[scan.result] || 0) + 1;
 
-    // Locations
     if (!diseaseLocations[scan.result]) {
       diseaseLocations[scan.result] = new Set();
     }
     if (scan.address) {
-      // Use a unique string representation for the address, e.g. village-road-state
       const addr = scan.address.address;
       const locationKey = `${addr.village || ""}-${addr.road || ""}-${addr.state || ""}`;
       diseaseLocations[scan.result].add(locationKey);
     }
   });
 
-  // Calculate average confidence
   const avgConfidence: Record<string, number> = {};
   for (const disease in confidenceSum) {
     avgConfidence[disease] = confidenceSum[disease] / confidenceCount[disease];
   }
 
-  // Map to structured output
   const distribution = filteredBananaDisease.map((disease) => {
     const count = counts[disease.id] || 0;
     const countPercentage = (count / totalScans) * 100;
     const finalAvgConfidence = avgConfidence[disease.id] || 0;
-    const uniqueLocations = diseaseLocations[disease.id]?.size || 0; // number of distinct locations
+    const uniqueLocations = diseaseLocations[disease.id]?.size || 0;
 
     return {
       ...disease,
       count,
       countPercentage: Number(countPercentage.toFixed(2)),
       avgConfidence: Number(finalAvgConfidence.toFixed(2)),
-      uniqueLocations, // <-- added
+      uniqueLocations,
     };
   });
 
@@ -387,8 +372,10 @@ export function getDiseaseStat(scans: ScanResultType[]) {
 
 type TrendFilter = "weekly" | "monthly" | "hourly";
 
+// ✅ Add bananaDiseases parameter
 export function getDiseaseTrends(
   data: ScanResultType[],
+  bananaDiseases: BananaDiseaseType[],
   filter: TrendFilter = "weekly",
 ) {
   const DISEASE_KEYS = bananaDiseases
@@ -433,15 +420,16 @@ export function getDiseaseTrends(
 
   return {
     data: formatted,
-    uniquePeriods: Object.keys(grouped).length, // how many distinct categories
+    uniquePeriods: Object.keys(grouped).length,
   };
 }
 
+// ✅ Add bananaDiseases parameter
 export function getDiseaseTrendsConfig(
   data: ScanResultType[],
+  bananaDiseases: BananaDiseaseType[],
   filter: TrendFilter = "weekly",
 ) {
-  // ✅ Always include all diseases except healthy and not-banana
   const DISEASES = bananaDiseases.filter(
     (disease) => disease.id !== "healthy" && disease.id !== "not-banana",
   );
@@ -481,11 +469,9 @@ export function getDiseaseTrendsConfig(
     }
   });
 
-  // 🔹 Get the latest period (hour/week/month)
   const latestKey = Object.keys(grouped).sort().pop();
   const latestData = latestKey ? grouped[latestKey] : {};
 
-  // 🔹 Build config with ALL diseases, defaulting to 0 if missing
   const config = DISEASES.map((disease) => {
     const count = latestData[disease.id] || 0;
     return {
@@ -515,7 +501,6 @@ export function getSeverityDistribution(data: ScanResultType[]) {
     (scan) => scan.result !== "not-banana" && scan.result !== "healthy",
   );
 
-  // Count occurrences
   const counts: Record<string, number> = {};
   filteredData.forEach((scan) => {
     const diseaseId = scan.result;
@@ -529,7 +514,6 @@ export function getSeverityDistribution(data: ScanResultType[]) {
 
   const total = Object.values(counts).reduce((sum, c) => sum + c, 0);
 
-  // Ensure all severities are present
   const distribution = allSeverities.map((severity) => {
     const count = counts[severity] || 0;
     return {
@@ -554,9 +538,9 @@ export interface GeographicsDataType {
   diseases: Record<string, number>;
   avgConfidence: number;
   lastScan: string;
-  healthPercentage: number; // 👈 added
+  healthPercentage: number;
   diseasedPercentage: number;
-  topDisease: string | null; // 👈 added
+  topDisease: string | null;
 }
 
 export function getGeographicsData(
@@ -611,17 +595,14 @@ export function getGeographicsData(
 
     const avgConfidence = confidenceSum / totalScans;
 
-    // 👇 Health percentage
     const healthPercentage = Number(
       ((healthyScans / totalScans) * 100).toFixed(1),
     );
 
-    // 👇 Health percentage
     const diseasedPercentage = Number(
       ((diseasedScans / totalScans) * 100).toFixed(1),
     );
 
-    // 👇 Top disease
     const diseaseEntries = Object.entries(diseases).filter(
       ([id]) => id !== "healthy" && id !== "not-banana",
     );
@@ -665,8 +646,8 @@ export interface InquiryMessageType {
   status?: StatusLabel;
   replied?: boolean;
   reply?: string;
-  repliedAt?: string; // ISO string
-  createdAt?: string; // ISO string
+  repliedAt?: string;
+  createdAt?: string;
 }
 
 export const sendInquiry = async (payload: InquiryMessageType) => {
@@ -846,7 +827,6 @@ export async function deleteInquiry(id: string) {
   }
 }
 
-//Inquiries Utility Functions
 export const getStatusColor = (status: string = "unread") => {
   const colors = {
     unread: "#f97a00",

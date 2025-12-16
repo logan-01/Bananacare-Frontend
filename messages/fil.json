@@ -1,0 +1,280 @@
+{
+  "home": {
+    "syncManager": "Sync Manager",
+    "heading": {
+      "main": "Detect Banana Disease",
+      "highlight": "with Precision"
+    },
+    "description": {
+      "intro": "Makabagong technoliya powered by AI na tumutukoy ng sakit ng saging nang mabilis.",
+      "highlight": "I-scan. Alamin. Protektahan",
+      "outro": "ang iyong pananim gamit ang makabagong technolohiyang ito"
+    },
+    "buttons": {
+      "startScanning": "Simulan ang Scan",
+      "viewGuide": "Tingnan ang Gabay",
+      "scanTitle": "Scan Banana Disease",
+      "guideTitle": "Gabay sa Pagkuha ng Larawan"
+    },
+    "features": {
+      "title": "Feautures",
+      "subtitle": "Alamin kung anung meron sa Bananacare",
+      "items": [
+        {
+          "title": "AI-Powered",
+          "description": "Advanced AI para sa mas tamang pagtukoy ng sakit"
+        },
+        {
+          "title": "Instant Results",
+          "description": "Makakuha ng diagnosis at rekomendasyon sa loob ng ilang segundo"
+        },
+        {
+          "title": "Crop Protection",
+          "description": "Protektahan ang ani at mapanatili ang magandang kalidad ng saging"
+        }
+      ]
+    },
+    "tagline": "Scan. Detect. Protect."
+  },
+  "diseases": {
+    "black-sigatoka": {
+      "name": "Black Sigatoka Disease",
+      "shortDescription": "Isang malubhang sakit sa dahon ng saging na nagpapababa ng ani.",
+      "description": "Ang Black Sigatoka ay sakit sa dahon ng saging na nagdudulot ng maiitim na guhit na kalaunan ay natutuyo at namamatay. Kapag lumala, nababawasan ang lakas ng halaman at kaunti ang bunga. Madaling kumalat ito lalo na sa mainit at mahalumigmig na lugar.",
+      "symptoms": [
+        "Maiitim na guhit o batik sa dahon",
+        "Maagang pagkatuyo ng dahon",
+        "Mahinang paglaki ng halaman",
+        "Kaunting bunga"
+      ],
+      "treatmentMethods": [
+        "Mag-spray ng fungicide tulad ng mancozeb o chlorothalonil.",
+        "Putulin at alisin ang may sakit na dahon.",
+        "Magpalit-palit ng gamot para hindi masanay ang sakit."
+      ],
+      "preventionTips": [
+        "Gumamit ng matibay o resistant na variety.",
+        "Panatilihin ang tamang pagitan ng tanim.",
+        "Iwasan ang pagdidilig sa ibabaw ng dahon."
+      ],
+      "recommendations": [
+        "Agad alisin ang apektadong dahon.",
+        "Panatilihing maaliwalas ang taniman.",
+        "Mag-spray ng fungicide ayon sa payo ng agriculturist."
+      ]
+    },
+
+    "bmv": {
+      "name": "Bract Mosaic Virus",
+      "shortDescription": "Viral na sakit na nagpapapangit ng dahon at nagpapahina sa halaman.",
+      "description": "Ang sakit na ito ay dulot ng virus na ikinakalat ng aphids. Nagkakaroon ng guhit at kakaibang hugis ang dahon, at humihina ang halaman. Walang gamot dito kaya kailangang alisin ang may sakit na tanim.",
+      "symptoms": [
+        "May guhit o batik sa dahon",
+        "Baluktot o pangit na dahon",
+        "Mahinang paglaki",
+        "Kaunting bunga"
+      ],
+      "treatmentMethods": [
+        "Walang lunas — kailangang bunutin ang apektadong halaman.",
+        "Patayin ang aphids gamit ang insecticide."
+      ],
+      "preventionTips": [
+        "Gumamit ng malinis at virus-free na punla.",
+        "Kontrolin ang aphids.",
+        "Iwasan ang pagtatanim malapit sa tubo."
+      ],
+      "recommendations": [
+        "Bunutin agad ang may sakit na halaman.",
+        "Gumamit ng malinis na punla.",
+        "Regular na magmasid sa taniman."
+      ]
+    },
+
+    "cordana": {
+      "name": "Cordana Disease",
+      "shortDescription": "Banayad na sakit sa dahon na nagdudulot ng mga batik.",
+      "description": "Ang Cordana ay nagdudulot ng kayumangging batik na may dilaw sa paligid ng dahon. Hindi agad nakakapatay ng halaman pero maaaring magpahina kapag napabayaan.",
+      "symptoms": [
+        "Kayumangging batik sa dahon",
+        "Dilaw sa paligid ng batik",
+        "Pagkatuyo ng dahon"
+      ],
+      "treatmentMethods": [
+        "Mag-spray ng copper-based fungicide.",
+        "Putulin ang may sakit na dahon."
+      ],
+      "preventionTips": [
+        "Huwag sobrahan ang pagdidilig.",
+        "Panatilihing malinis ang taniman."
+      ],
+      "recommendations": [
+        "Alisin ang apektadong dahon.",
+        "Panatilihin ang maayos na daloy ng hangin."
+      ]
+    },
+
+    "healthy": {
+      "name": "Banana Healthy",
+      "shortDescription": "Malusog na halaman ng saging.",
+      "description": "Ang malusog na saging ay may berdeng dahon, matibay na katawan, at walang senyales ng sakit o peste.",
+      "symptoms": [
+        "Berdeng dahon",
+        "Matibay na katawan",
+        "Walang batik o sira"
+      ],
+      "treatmentMethods": [],
+      "preventionTips": [
+        "Panatilihin ang tamang dilig at abono.",
+        "Gumamit ng malinis na punla.",
+        "Regular na magmasid sa halaman."
+      ],
+      "recommendations": [
+        "Ipagpatuloy ang tamang pag-aalaga.",
+        "Panatilihing malinis ang taniman."
+      ]
+    },
+
+    "moko": {
+      "name": "Moko Disease",
+      "shortDescription": "Malubhang sakit na mabilis ikamatay ng saging.",
+      "description": "Ang Moko disease ay isang mapanganib na sakit na nagpapalanta at nagpapabagsak ng halaman. Walang gamot dito at madaling kumalat sa pamamagitan ng tools at lupa.",
+      "symptoms": [
+        "Biglaang pagkalanta",
+        "Pagkadilaw ng dahon",
+        "Pagbagsak ng halaman",
+        "Maagang pagkahinog ng bunga"
+      ],
+      "treatmentMethods": [
+        "Walang lunas — sirain agad ang apektadong halaman.",
+        "Linisin at i-disinfect ang mga gamit."
+      ],
+      "preventionTips": [
+        "Gumamit ng malinis na punla.",
+        "Huwag gumamit ng maruming tools.",
+        "Iwasan ang paglipat ng lupa."
+      ],
+      "recommendations": [
+        "Agad bunutin at sunugin ang may sakit na halaman.",
+        "Panatilihing malinis ang mga gamit."
+      ]
+    },
+
+    "panama": {
+      "name": "Panama Disease",
+      "shortDescription": "Sakit sa lupa na walang lunas.",
+      "description": "Ang Panama disease ay sakit na nananatili sa lupa ng matagal na panahon. Kapag tinamaan ang saging, unti-unti itong nalalanta at namamatay.",
+      "symptoms": [
+        "Pagkadilaw ng dahon",
+        "Pagkalanta ng halaman",
+        "Pagbitak sa puno"
+      ],
+      "treatmentMethods": ["Walang gamot — sirain ang halaman."],
+      "preventionTips": [
+        "Gumamit ng resistant na variety.",
+        "Iwasan ang kontaminadong lupa."
+      ],
+      "recommendations": [
+        "Huwag magtanim sa infected na lupa.",
+        "Magpalit ng pananim kung kinakailangan."
+      ]
+    },
+
+    "not-banana": {
+      "name": "Not Banana",
+      "shortDescription": "Hindi saging ang laman ng larawan.",
+      "description": "Ang larawan ay hindi halaman ng saging. Siguraduhing dahon o puno ng saging ang kuhanan.",
+      "symptoms": ["Hindi naaangkop"],
+      "treatmentMethods": [],
+      "preventionTips": ["Siguraduhing saging ang kinukuhanan ng larawan."],
+      "recommendations": []
+    },
+
+    "weevil": {
+      "name": "Weevil Disease",
+      "shortDescription": "Pesteng uod na sumisira sa puno ng saging.",
+      "description": "Ang banana weevil ay uod na bumabaon sa puno at ugat ng saging. Dahil dito, humihina ang halaman at maaaring matumba.",
+      "symptoms": [
+        "Butas o lagusan sa puno",
+        "Mahinang paglaki",
+        "Nanlalantang halaman",
+        "Natumbang puno"
+      ],
+      "treatmentMethods": [
+        "Gumamit ng bitag o biological control.",
+        "Mag-spray ng insecticide kung malala."
+      ],
+      "preventionTips": [
+        "Gumamit ng malinis na punla.",
+        "Tanggalin ang mga tirang tangkay.",
+        "Maglagay ng bitag."
+      ],
+      "recommendations": [
+        "Regular na maglagay ng bitag.",
+        "Panatilihing malinis ang taniman."
+      ]
+    }
+  },
+
+  "diseaseTypes": {
+    "Fungal": "Fungal",
+    "Viral": "Viral",
+    "Bacterial": "Bacterial",
+    "Pest": "Pest",
+    "Normal": "Normal",
+    "Invalid": "Invalid"
+  },
+
+  "diseaseSeverity": {
+    "High": "High",
+    "Medium": "Medium",
+    "None": "None"
+  },
+  "about": {
+    "header": {
+      "title": "Get to Know",
+      "highlight": "Bananacare",
+      "subtitle": "Alamin kung paano binabago ng BananaCare ang pagtukoy ng sakit ng saging"
+    },
+    "cards": [
+      {
+        "icon": "/img/About.svg",
+        "title": "Tungkol sa BananaCare",
+        "subtitle": "Makabagong Tulong para sa Magsasaka",
+        "description": "Ang BananaCare ay isang makabagong sistema na tumutulong sa mga magsasaka ng saging na matukoy ang posibleng sakit ng halaman gamit ang larawan ng dahon. Sa simpleng pagkuha at pag-upload ng litrato, mabilis na nakakakuha ng impormasyon para agad na makakilos.",
+        "featuresTitle": "Mga Pangunahing Katangian:",
+        "features": [
+          "Pagtukoy ng Sakit gamit ang Larawan",
+          "Mabilis na Resulta",
+          "Maagang Pag-iwas sa Sakit",
+          "Maaaring Gamitin sa Cellphone"
+        ]
+      },
+      {
+        "icon": "/img/Mission.svg",
+        "title": "Aming Misyon",
+        "subtitle": "Teknolohiyang Abot-Kamay ng Magsasaka",
+        "description": "Layunin ng BananaCare na gawing simple at madaling gamitin ang teknolohiya sa pagsasaka. Nais naming tulungan ang mga magsasaka na maprotektahan ang kanilang pananim kahit walang kaalaman sa makabagong teknolohiya.",
+        "featuresTitle": "Mga Pangunahing Katangian:",
+        "features": [
+          "Madaling Gamitin",
+          "Disenyong Pang-Magsasaka",
+          "Gumagana Kahit sa Simpleng Cellphone",
+          "Praktikal sa Tunay na Sakahan"
+        ]
+      },
+      {
+        "icon": "/img/Goal.svg",
+        "title": "Aming Layunin",
+        "subtitle": "Mas Ligtas at Mas Masaganang Ani",
+        "description": "Layunin ng BananaCare na makatulong sa pagbawas ng pagkasira ng ani dahil sa sakit ng halaman. Sa maagang pagtukoy ng problema, natutulungan ang mga magsasaka na mapataas ang ani at mapanatili ang maayos na pagsasaka.",
+        "featuresTitle": "Mga Pangunahing Katangian:",
+        "features": [
+          "Bawasan ang Pagkawala ng Ani",
+          "Mas Maayos na Desisyon sa Pagsasaka",
+          "Suporta sa Sustainable Farming",
+          "Tulong para sa Lokal na Magsasaka"
+        ]
+      }
+    ]
+  }
+}

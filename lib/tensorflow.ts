@@ -1,5 +1,5 @@
 import * as tf from "@tensorflow/tfjs";
-import { BananaDiseaseType, bananaDiseases } from "@/lib/constant";
+import { BananaDiseaseType } from "@/lib/constant";
 
 //* Register the L2 Regularizer
 class L2 {
@@ -39,6 +39,7 @@ const loadImage = (file: File): Promise<HTMLImageElement> => {
 export const makePrediction = async (
   model: tf.LayersModel,
   tensor: tf.Tensor,
+  bananaDiseases: BananaDiseaseType[],
 ): Promise<BananaDiseaseType[]> => {
   const prediction = model.predict(tensor) as tf.Tensor;
   const predictionArray = Array.from(await prediction.data());

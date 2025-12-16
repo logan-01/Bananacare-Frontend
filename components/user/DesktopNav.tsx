@@ -5,6 +5,8 @@ import PlatformWrapper from "../wrapper/PlatformWrapper";
 import DownloadPage from "./DownloadPage";
 import { RiDownloadLine } from "react-icons/ri";
 
+import LanguageSwitcher from "@/components/ui/language-switcher";
+
 function DesktopNav() {
   const sectionIds = ["home", "disease", "about", "contact"];
   const [activeNav, setActiveNav] = useState<string>("home");
@@ -57,6 +59,8 @@ function DesktopNav() {
             : id.charAt(0).toUpperCase() + id.slice(1)}
         </li>
       ))}
+
+      <LanguageSwitcher />
 
       <PlatformWrapper
         title="Download App"

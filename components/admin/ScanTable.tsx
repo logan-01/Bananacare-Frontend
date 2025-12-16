@@ -55,7 +55,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import ResultModal from "../modals/ResultModal";
 import DeleteModal from "../modals/DeleteModal";
-import { bananaDiseases, ScanResultType } from "@/lib/constant";
+import { ScanResultType, useBananaDiseases } from "@/lib/constant";
 import {
   Pagination,
   PaginationContent,
@@ -74,6 +74,8 @@ interface ScanTableProps {
 }
 
 function ScanTable({ data, onDelete }: ScanTableProps) {
+  const bananaDiseases = useBananaDiseases();
+
   const diseaseTypes = bananaDiseases
     .filter((disease) => disease.id !== "not-banana")
     .map((disease) => disease.id);

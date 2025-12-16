@@ -11,7 +11,11 @@ import { useForm } from "react-hook-form";
 import * as tf from "@tensorflow/tfjs";
 import { loadModel, preprocessImage, makePrediction } from "@/lib/tensorflow";
 //Constant
-import { BananaDiseaseType, augmentationSteps } from "@/lib/constant";
+import {
+  BananaDiseaseType,
+  augmentationSteps,
+  useBananaDiseases,
+} from "@/lib/constant";
 //Shadcn
 import { Button } from "@/components/ui/button";
 import { Form, FormField } from "@/components/ui/form";
@@ -46,6 +50,8 @@ const scanSchema = z.object({
 });
 
 function ScanForm() {
+  const bananaDiseases = useBananaDiseases();
+
   //* useState
   const [showResult, setShowResult] = useState<boolean>(false);
   const [showLoader, setShowLoader] = useState<boolean>(false);
@@ -152,7 +158,7 @@ function ScanForm() {
       });
 
       const tensor = await preprocessImage(bananaImage);
-      const results = await makePrediction(model, tensor);
+      const results = await makePrediction(model, tensor, bananaDiseases);
       console.log("🧠 AI Prediction results:", results);
 
       // Always check with local model first
@@ -211,11 +217,20 @@ function ScanForm() {
           );
           console.log("🗺️ Location info received:", locationInfo);
 
-          // Step 3: Prepare payload
+          // Step 3: Prepare payload - SAVE IDs INSTEAD OF NAMES
           const payload = {
             percentage: results[0].percentage ?? 0,
-            resultArr: results,
-            result: results[0].id,
+            // Map resultArr to save only IDs and non-translated data
+            resultArr: results.map((r) => ({
+              id: r.id, // ✅ Save disease ID, not translated name
+              percentage: r.percentage,
+              type: r.type,
+              severity: r.severity,
+              color: r.color,
+              textColor: r.textColor,
+              // ❌ Don't include 'name' - it will be translated on frontend
+            })),
+            result: results[0].id, // ✅ Save disease ID
             imgUrl: imgUrl || "",
             address: locationInfo,
           };
@@ -224,6 +239,7 @@ function ScanForm() {
             percentage: payload.percentage,
             hasImage: !!payload.imgUrl,
             hasAddress: !!payload.address,
+            resultArrCount: payload.resultArr.length,
           });
 
           // Step 4: Send to backend
@@ -239,7 +255,7 @@ function ScanForm() {
             bananaImage,
             results[0].percentage ?? 0,
             results,
-            results[0].id,
+            results[0].id, // ✅ Save disease ID
             {
               latitude: locationData.latitude,
               longitude: locationData.longitude,
@@ -254,7 +270,7 @@ function ScanForm() {
           bananaImage,
           results[0].percentage ?? 0,
           results,
-          results[0].id,
+          results[0].id, // ✅ Save disease ID
           {
             latitude: locationData.latitude,
             longitude: locationData.longitude,

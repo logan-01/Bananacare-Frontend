@@ -9,10 +9,12 @@ import GeographicTable from "@/components/admin/GeographicTable";
 
 import { getGeographicsData } from "@/lib/helper";
 import useScanResult from "@/hooks/useScanResult";
-import { bananaDiseases } from "@/lib/constant";
+import { useBananaDiseases } from "@/lib/constant";
 import { GeographicsDataType } from "@/lib/helper";
 
 const GeographicInsights = () => {
+  const bananaDiseases = useBananaDiseases();
+
   const [selectedTimeframe, setSelectedTimeframe] = useState("all");
   const [selectedDisease, setSelectedDisease] = useState("bmv");
   const [mapView, setMapView] = useState("density");

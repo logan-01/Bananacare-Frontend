@@ -8,6 +8,8 @@ import { TfiArrowsHorizontal, TfiArrowsVertical } from "react-icons/tfi";
 import { PiParallelogramThin, PiFlipHorizontalLight } from "react-icons/pi";
 import { IconType } from "react-icons/lib";
 import { Capacitor } from "@capacitor/core";
+import { useTranslations } from "next-intl";
+import { useMemo } from "react";
 
 export const isNative = Capacitor.isNativePlatform();
 // export const isNative = false;
@@ -46,7 +48,7 @@ interface OSMAddress {
   village?: string;
   postcode?: string;
   country_code?: string;
-  [key: string]: any; // covers ISO codes or other optional fields
+  [key: string]: any;
 }
 
 interface OSMGeocoding {
@@ -74,10 +76,87 @@ export interface ScanResultType {
   resultArr: BananaDiseaseType[];
   percentage: number;
   imgUrl: string;
-  createdAt: string; // ISO string
+  createdAt: string;
 }
 
-//! IMPORTANT THE SEQUENCE/ORDER OF THE OBJECT MUST NOT CHANGE
+// Static data that doesn't need translation
+const diseaseMetadata = {
+  "black-sigatoka": {
+    id: "black-sigatoka",
+    type: "Fungal" as const,
+    severity: "High" as const,
+    color: "#F93827",
+    textColor: "#fbfefa",
+    imgUrl: "/img/Banana-Black-Sigatoka.jpg",
+    iconUrl: "/img/Black_Sigatoka_Icon.png",
+  },
+  bmv: {
+    id: "bmv",
+    type: "Viral" as const,
+    severity: "Medium" as const,
+    color: "#6A0066",
+    textColor: "#fbfefa",
+    imgUrl: "/img/Banana-Bract-Mosaic-Virus.jpg",
+    iconUrl: "/img/BMV_Icon.png",
+  },
+  cordana: {
+    id: "cordana",
+    type: "Fungal" as const,
+    severity: "Medium" as const,
+    color: "#FF9B00",
+    textColor: "#26333a",
+    imgUrl: "/img/Banana-Cordana.jpg",
+    iconUrl: "/img/Cordana_Icon.png",
+  },
+  healthy: {
+    id: "healthy",
+    type: "Normal" as const,
+    severity: "None" as const,
+    color: "#22b123",
+    textColor: "#fbfefa",
+    imgUrl: "/img/Banana-Bunch.jpg",
+    iconUrl: "/img/Healthy_Icon.png",
+  },
+  moko: {
+    id: "moko",
+    type: "Bacterial" as const,
+    severity: "High" as const,
+    color: "#EB5353",
+    textColor: "#fbfefa",
+    imgUrl: "/img/Banana-Moko.jpg",
+    iconUrl: "/img/Moko_Icon.png",
+  },
+  panama: {
+    id: "panama",
+    type: "Fungal" as const,
+    severity: "High" as const,
+    color: "#36AE7C",
+    textColor: "#FBFEFA",
+    imgUrl: "/img/Banana-Panama.jpg",
+    iconUrl: "/img/Panama_Icon.png",
+  },
+  "not-banana": {
+    id: "not-banana",
+    type: "Invalid" as const,
+    severity: "None" as const,
+    color: "",
+    textColor: "",
+    imgUrl: "/img/Banana-Bunch.jpg",
+    iconUrl: "",
+  },
+  weevil: {
+    id: "weevil",
+    type: "Pest" as const,
+    severity: "Medium" as const,
+    color: "#187498",
+    textColor: "#fbfefa",
+    imgUrl: "/img/Banana-Weevil.jpg",
+    iconUrl: "/img/Weevil_Icon.png",
+  },
+} as const;
+
+//! IMPORTANT: Keep this for backward compatibility with existing code
+//! THE SEQUENCE/ORDER OF THE OBJECT MUST NOT CHANGE
 //! ["black-sigatoka", "bmv", "cordana" , "healthy","moko","panama","not-banana", "weevil" ]
 export const bananaDiseases: BananaDiseaseType[] = [
   {
@@ -343,6 +422,89 @@ export const bananaDiseases: BananaDiseaseType[] = [
   },
 ];
 
+// Hook to get translated diseases
+// Fixed hook with useMemo and safe translation access
+export function useBananaDiseases(): BananaDiseaseType[] {
+  const t = useTranslations("diseases");
+
+  return useMemo(() => {
+    return Object.keys(diseaseMetadata).map((diseaseId) => {
+      const metadata =
+        diseaseMetadata[diseaseId as keyof typeof diseaseMetadata];
+
+      // Safe translation getter that won't throw errors
+      const safeTranslate = (key: string): string => {
+        try {
+          const result = t.raw(key);
+          return typeof result === "string" ? result : "";
+        } catch {
+          return "";
+        }
+      };
+
+      // Helper function to safely get array translations
+      const getArrayTranslations = (key: string): string[] => {
+        try {
+          const arrayData = t.raw(`${diseaseId}.${key}`);
+
+          // If it's already an array in the translation file, return it
+          if (Array.isArray(arrayData)) {
+            return arrayData.filter((item) => typeof item === "string");
+          }
+
+          // Otherwise try to get individual indexed items
+          const items: string[] = [];
+          for (let i = 0; i < 20; i++) {
+            try {
+              const item = t.raw(`${diseaseId}.${key}.${i}`);
+              if (typeof item === "string" && item) {
+                items.push(item);
+              } else {
+                break;
+              }
+            } catch {
+              break;
+            }
+          }
+          return items;
+        } catch {
+          return [];
+        }
+      };
+
+      return {
+        id: metadata.id,
+        type: metadata.type,
+        severity: metadata.severity,
+        color: metadata.color,
+        textColor: metadata.textColor,
+        imgUrl: metadata.imgUrl,
+        iconUrl: metadata.iconUrl,
+        name: safeTranslate(`${diseaseId}.name`),
+        shortDescription: safeTranslate(`${diseaseId}.shortDescription`),
+        description: safeTranslate(`${diseaseId}.description`),
+        symptoms: getArrayTranslations("symptoms"),
+        treatmentMethods: getArrayTranslations("treatmentMethods"),
+        preventionTips: getArrayTranslations("preventionTips"),
+        recommendations: getArrayTranslations("recommendations"),
+      };
+    });
+  }, [t]);
+}
+
+// Fixed helper with useMemo
+export function useBananaDisease(
+  diseaseId: string,
+): BananaDiseaseType | undefined {
+  const diseases = useBananaDiseases();
+
+  return useMemo(() => {
+    return diseases.find((d) => d.id === diseaseId);
+  }, [diseases, diseaseId]);
+}
+// For components that need disease IDs only (without translations)
+export const diseaseIds = Object.keys(diseaseMetadata);
+
 export const barangay = [
   { title: "Alcadesma" },
   { title: "Bato" },
@@ -431,5 +593,5 @@ export const severityColors: Record<string, string> = {
   High: "#FF9B00",
   Medium: "#36AE7C",
   Low: "#187498",
-  None: "#22b123", // for healthy / not-banana or unknown
+  None: "#22b123",
 };

@@ -22,22 +22,32 @@ import {
   getDiseaseStat,
 } from "@/lib/helper";
 import useScanResult from "@/hooks/useScanResult";
+import { useBananaDiseases } from "@/lib/constant";
 
 type TrendFilter = "weekly" | "monthly" | "hourly";
 
 const page = () => {
+  const bananaDiseases = useBananaDiseases();
+
   const [timeframe, setTimeframe] = useState<TrendFilter>("hourly");
 
   const scanResult = useScanResult();
-  const diseaseStats = getDiseaseStat(scanResult);
+  const diseaseStats = getDiseaseStat(scanResult, bananaDiseases);
 
   // Timeframes
   const timeframes: TrendFilter[] = ["monthly", "weekly", "hourly"];
-  const diseaseTrendsConfig = getDiseaseTrendsConfig(scanResult, timeframe);
+  const diseaseTrendsConfig = getDiseaseTrendsConfig(
+    scanResult,
+    bananaDiseases,
+    timeframe,
+  );
 
   // All Disease Trends Data
   const trendResults = Object.fromEntries(
-    timeframes.map((tf) => [tf, getDiseaseTrends(scanResult, tf)]),
+    timeframes.map((tf) => [
+      tf,
+      getDiseaseTrends(scanResult, bananaDiseases, tf),
+    ]),
   ) as Record<TrendFilter, { data: any[]; uniquePeriods: number }>;
 
   // Disease Trend Data with specific timeframe

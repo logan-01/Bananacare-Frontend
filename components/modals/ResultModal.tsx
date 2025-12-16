@@ -1,14 +1,9 @@
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogCancel,
-} from "@/components/ui/alert-dialog";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { useMemo } from "react";
+import { useTranslations } from "next-intl";
 import {
   MdClose,
   MdRefresh,
@@ -21,6 +16,9 @@ import {
 } from "react-icons/md";
 import { BananaDiseaseType } from "@/lib/constant";
 import PlatformWrapper from "../wrapper/PlatformWrapper";
+import LanguageSwitcher from "../ui/language-switcher";
+import { getDiseaseId } from "@/lib/diseaseMapper";
+import { useAuth } from "@/hooks/useAuth";
 
 interface ResultModalProps {
   open: boolean;
@@ -39,6 +37,55 @@ const ResultModal: React.FC<ResultModalProps> = ({
   previewImg,
   isOfflineResult = false,
 }) => {
+  const t = useTranslations("diseases");
+
+  // Helper function to get array translations safely
+  const getArrayTranslations = (diseaseId: string, key: string): string[] => {
+    try {
+      const arrayData = t.raw(`${diseaseId}.${key}`);
+
+      if (Array.isArray(arrayData)) {
+        return arrayData.filter((item) => typeof item === "string");
+      }
+
+      const items: string[] = [];
+      for (let i = 0; i < 20; i++) {
+        try {
+          const item = t.raw(`${diseaseId}.${key}.${i}`);
+          if (typeof item === "string" && item) {
+            items.push(item);
+          } else {
+            break;
+          }
+        } catch {
+          break;
+        }
+      }
+      return items;
+    } catch {
+      return [];
+    }
+  };
+
+  // Translate rankedResults dynamically based on current locale
+  const translatedResults = useMemo(() => {
+    return rankedResults.map((result) => {
+      const diseaseId = getDiseaseId(result.id || result.name || "");
+
+      return {
+        ...result,
+        id: diseaseId,
+        name: t(`${diseaseId}.name`),
+        shortDescription: t(`${diseaseId}.shortDescription`),
+        description: t(`${diseaseId}.description`),
+        symptoms: getArrayTranslations(diseaseId, "symptoms"),
+        treatmentMethods: getArrayTranslations(diseaseId, "treatmentMethods"),
+        preventionTips: getArrayTranslations(diseaseId, "preventionTips"),
+        recommendations: getArrayTranslations(diseaseId, "recommendations"),
+      };
+    });
+  }, [rankedResults, t]);
+
   const handleClose = () => {
     onClose();
     if (resetForm) {
@@ -50,7 +97,7 @@ const ResultModal: React.FC<ResultModalProps> = ({
     handleClose();
   };
 
-  const topResult = rankedResults[0];
+  const topResult = translatedResults[0];
   const confidence = topResult?.percentage || 0;
 
   // Get appropriate icon and styling based on confidence level
@@ -87,7 +134,7 @@ const ResultModal: React.FC<ResultModalProps> = ({
   const confidenceStatus = getConfidenceStatus(confidence);
   const ConfidenceIcon = confidenceStatus.icon;
 
-  const filteredResults = rankedResults.filter(
+  const filteredResults = translatedResults.filter(
     (item) => item.id !== "not-banana",
   );
 
@@ -116,6 +163,9 @@ const ResultModal: React.FC<ResultModalProps> = ({
           </Badge>
         </div>
       )}
+      <div className="flex justify-end py-2">
+        <LanguageSwitcher />
+      </div>
 
       <div className="space-y-6">
         {/* Header with confidence indicator */}

@@ -6,6 +6,7 @@ import "./globals.css";
 import "leaflet/dist/leaflet.css";
 import "react-leaflet-cluster/dist/assets/MarkerCluster.css";
 import "react-leaflet-cluster/dist/assets/MarkerCluster.Default.css";
+import { NextIntlClientProvider } from "next-intl";
 
 const raleway = Raleway({
   variable: "--font-raleway",
@@ -38,7 +39,7 @@ export default async function RootLayout({
       <body
         className={`${raleway.variable} ${clashGrotesk.variable} text-dark bg-light flex min-h-screen flex-col`}
       >
-        {children}
+        <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>
     </html>
   );
